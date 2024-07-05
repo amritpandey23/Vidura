@@ -1,31 +1,41 @@
-# Vidura - Your personal work tracker
+# Vidura - Personal Work Tracker
 
-Vidura is my personal work tracker that helps me track your daily professional and personal tasks. It is a hobby project of mine and is available for anyone to use in development environment. Some features of this app are:
+Vidura is my personal work tracker designed to help me manage my daily professional and personal tasks. It's a hobby project that's available for use in a development environment. Key features include:
 
-- Tasks: Create new tasks and revisit history.
-- Logs: Add daily activity logs.
-- Customization options.
+- **Tasks**: Create new tasks and revisit task history.
+- **Logs**: Add daily activity logs.
+- **Customization**: Various customization options available.
 
-Currently all these features are manual, however it is still in the beginning phase and I plan to automate the heck out of this thing. For example, I want the daily log to be filled based on the tasks that have been worked on. I also want to add gen ai based insight generation for my historical data.
+## Setting Up the Development Environment
 
-## Setting development environment
+Vidura is a web app that runs locally, so you'll need to set it up manually.
 
-As this is a web app and only runs locally, you'll have to perform setup manually.
-
-### What you'll need?
+### Requirements
 
 - Python 3.11
-- Pip 24 or latest
+- Pip 24 or later
 - Virtual environment
 
-### Setup
+### Setup Instructions
 
-1. Clone the repo.
-2. Create virtual environment inside the repo: `python -m venv .venv`.
-3. Activate environment: `. .venv/Scripts/activate`, if you are on mac then: `. .venv/bin/activate`.
-4. Install dependencies: `pip install -r requirements.txt`.
-5. Launch: `python start.py`.
+1. Clone the repository.
+2. Create a virtual environment inside the repository: `python -m venv .venv`.
+3. Activate the virtual environment:
+   - On Windows: `. .venv/Scripts/activate`
+   - On macOS/Linux: `. .venv/bin/activate`
+4. Install the dependencies: `pip install -r requirements.txt`.
+5. Launch the application: `python start.py`.
 
-## Database location
+## Customization
 
-By default database is stored in the user directory with the name `site.db`. You can also navigate to `/settings` route to find the exact directory path in settings section.
+### Database File
+
+By default, the database is stored in the user directory under the name `site.db`. You can also navigate to the `/settings` route to find the exact directory path in the settings section.
+
+### Important Dates
+
+Important dates can be added in a JSON file, which can be edited via the `/settings` route.
+
+### Notes
+
+To add notes, such as important links or other information on home page, use the JSON field in the `/settings` route. An example format is provided.
