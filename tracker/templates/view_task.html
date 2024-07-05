@@ -1,0 +1,72 @@
+{% extends "_layout.html" %}
+{% block content %}
+<div class="card mt-4">
+    <div class="card-header bg-dark bg-gradient text-white">
+        <h4 class="card-title">{{ task.name }} [ <a href="{{url_for('tasks.edit_task', task_id=task.id)}}"><i
+                    class="fa-solid fa-pen"></i></a> ]</h4>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <!-- Resource Type Badge -->
+                {% if task.resource_type == 'P' %}
+                <span class="badge text-bg-primary">{{ task.resource_type }}</span>
+                {% else %}
+                <span class="badge text-bg-success">{{ task.resource_type }}</span>
+                {% endif %}
+
+                <!-- Priority Badge -->
+                {% if task.priority == 'High' %}
+                <span class="badge text-bg-danger">{{ task.priority }}</span>
+                {% elif task.priority == 'Medium' %}
+                <span class="badge text-bg-warning">{{ task.priority }}</span>
+                {% else %}
+                <span class="badge text-bg-primary">{{ task.priority }}</span>
+                {% endif %}
+
+                <!-- Category Badge -->
+                <span class="badge text-bg-secondary">{{ task.category }}</span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-12 d-flex align-items-center">
+                <strong class="mr-2"><i class="fa-solid fa-arrow-up-right-from-square"></i> External
+                    Link:&nbsp;</strong>
+                <a href="{{ task.external_link }}" class="d-inline-block"> {{ task.external_link }}</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 border-right">
+                <h5><i class="fa-solid fa-circle-info"></i> Description</h5>
+                <p class="border py-1 px-2" style="min-height: 100px;">{{ task.description }}</p>
+                <h5><i class="fa-solid fa-ban"></i> Blockers</h5>
+                <p class="border py-1 px-2" style="min-height: 100px;">{{ task.blockers }}</p>
+            </div>
+            <div class="col-md-6">
+                <h5><i class="fa-solid fa-bars-progress"></i> Progress</h5>
+                <div class="progress mb-3">
+                    <div class="progress-bar" role="progressbar" style="width: {{ task.progress_counter }}%;"
+                        aria-valuenow="{{ task.progress_counter }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <h5><i class="fa-solid fa-calendar-days"></i> Date of Allotment</h5>
+                <p>{{ task.date_of_allotment }}</p>
+                <h5><i class="fa-solid fa-flag-checkered"></i> Due Date</h5>
+                <p>{{ task.due_date }}</p>
+                {% if task.time_spent != None %}
+                <h5><i class="fa-solid fa-calendar-days"></i> Time Spent</h5>
+                <p>{{ task.time_spent }} days</p>
+                {% endif %}
+                {% if task.close_date != None %}
+                <h5><i class="fa-solid fa-calendar-days"></i> Date Closed</h5>
+                <p>{{ task.close_date }}</p>
+                {% else %}
+                {% if task.due_date != None %}
+                <h5><i class="fa-solid fa-bell"></i> Days Remaining</h5>
+                <h5 class="display-6">{{ (task.due_date - datetime.date.today()).days }}</h5>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

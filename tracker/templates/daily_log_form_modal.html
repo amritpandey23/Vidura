@@ -1,0 +1,46 @@
+<div class="modal fade" tabindex="-1" id="dailyLogModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Daily Log</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('logs.add_log') }}">
+                    {{ daily_log_form.hidden_tag() }}
+
+                    <!-- Resource Type -->
+                    <div class="mb-3">
+                        {{ daily_log_form.resource_type.label(class="form-label") }}
+                        {{ daily_log_form.resource_type(class="form-select") }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ daily_log_form.tasks.label(class="form-label") }}
+                        {{ daily_log_form.tasks(class="form-select", style="min-height:400px;") }}
+                    </div>
+
+                    <!-- Explanation -->
+                    <div class="mb-3">
+                        {{ daily_log_form.explanation.label(class="form-label") }}
+                        {{ daily_log_form.explanation(class="form-control", rows=4) }}
+                    </div>
+
+                    <!-- Blockers -->
+                    <div class="mb-3">
+                        {{ daily_log_form.blockers.label(class="form-label") }}
+                        {{ daily_log_form.blockers(class="form-control", rows=3) }}
+                    </div>
+
+
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary btn-sm">{{ daily_log_form.submit.label }}</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

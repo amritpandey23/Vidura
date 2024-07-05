@@ -1,0 +1,75 @@
+<div class="modal fade" tabindex="-1" id="filterModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Filter By</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('tasks.filter_tasks') }}">
+                    {{ task_filter_form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ task_filter_form.resource_type.label(class="form-label") }} {{
+                        task_filter_form.resource_type(class="form-select") }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ task_filter_form.category.label(class="form-label") }} {{
+                        task_filter_form.category(class="form-select") }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ task_filter_form.priority.label(class="form-label") }} {{
+                        task_filter_form.priority(class="form-select") }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ task_filter_form.progress_status.label(class="form-label") }} {{
+                        task_filter_form.progress_status(class="form-select") }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Date of allotment between</label>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                {{
+                                task_filter_form.date_of_allotment_start(class="form-control")
+                                }}
+                            </div>
+                            <div class="col-sm-6">
+                                {{ task_filter_form.date_of_allotment_end(class="form-control")
+                                }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Due date between</label>
+                        <div class="row">
+                            <div class="col">
+                                {{ task_filter_form.due_date_start(class="form-control") }}
+                            </div>
+                            <div class="col">
+                                {{ task_filter_form.due_date_end(class="form-control") }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 d-flex justify-content-end">
+                        <div class="btn-group" role="group" aria-label="Filter actions">
+                            {{ task_filter_form.submit(class="btn btn-sm btn-primary") }}
+                            <a href="{{ url_for('tasks.all_tasks') }}" class="btn btn-sm btn-danger">Reset</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <small>Hold CTRL to make multiple selections</small>
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

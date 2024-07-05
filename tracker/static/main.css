@@ -1,0 +1,15 @@
+.status-Blocked {
+    background-color: #ffcaca;
+}
+
+.status-Ongoing {
+    background-color: #fffac1;
+}
+
+.status-Completed {
+    background-color: #bdffca;
+}
+
+.status-Dropped {
+    background-color: #d7d7d7;
+}

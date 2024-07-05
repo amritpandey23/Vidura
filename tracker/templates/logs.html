@@ -1,0 +1,86 @@
+{% extends "_layout.html" %}
+{% block content %}
+
+<h2 class="display-2 mb-4">Daily Logs</h2>
+
+{% for log in logs.items %}
+
+<div class="log-card d-flex flex-column mb-4 mt-4 bg-body-secondary">
+    <div class="log-card-metainfo d-flex mb-2">
+        <div style="text-transform: uppercase; padding: 0.5rem 1rem; font-weight: 600;"
+            class="log-card-meta-item bg-primary text-white resource-type">
+            {% if log.resource_type == 'P' %}
+            Productive
+            {% else %}
+            Self
+            {% endif %}
+        </div>
+        <div style="text-transform: uppercase; padding: 0.5rem 1rem; font-weight: 600;"
+            class="log-card-meta-item bg-success text-white">
+            {{ log.date | date_to_text }}
+        </div>
+        <div style="text-transform: uppercase; padding: 0.5rem 1rem; font-weight: 600;"
+            class="log-card-meta-item bg-danger ms-auto">
+            <a style="text-decoration: none;" class="text-white"
+                href="{{ url_for('logs.delete_log', log_id=log.id) }}"><i class="fa-solid fa-trash"></i></a>
+        </div>
+    </div>
+    {% if log.task_ids %}
+    <ul class="log-card-taskids d-flex align-items-stretch" style="padding: 0; margin: 0; list-style: none;">
+        <li style="margin-top: -7px;" class="p-2">Tasks: </li>
+        {% for task_id in log.task_ids.split(',') %}
+        {% if task_id != '' %}
+        <li class="log-card-task-id"><a style="text-decoration: none;" class="text-white py-2 px-3 border bg-secondary"
+                target="_blank" href="{{ url_for('tasks.view_task', task_id=task_id) }}">{{
+                task_id }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <div class="log-card-description p-3">
+        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapse-{{log.id}}" aria-expanded="false" aria-controls="collapseExample">
+            <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="collapse" id="collapse-{{log.id}}">
+            <pre>{{ log.explanation }}</pre>
+        </div>
+
+    </div>
+</div>
+
+{% endfor %}
+
+<div class="d-flex justify-content-center my-4">
+
+    {% if logs.pages %}
+    <div class="d-flex justify-content-center mt-3">
+        <ul class="pagination">
+            {% if logs.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('logs.logs', page=logs.prev_num) }}">Previous</a>
+            </li>
+            {% endif %}
+            {% for num in logs.iter_pages() %}
+            {% if num %}
+            <li class="page-item {% if num == logs.page %}active{% endif %}">
+                <a class="page-link" href="{{ url_for('logs.logs', page=num) }}">{{ num }}</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">...</span>
+            </li>
+            {% endif %}
+            {% endfor %}
+            {% if logs.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('logs.logs', page=logs.next_num) }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+    <!-- End Pagination -->
+    {% endif %}
+</div>
+{% endblock %}

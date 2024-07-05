@@ -1,0 +1,37 @@
+{% extends "_layout.html" %}
+{% block content %}
+<h1 class="display-2 mb-4">Settings</h1>
+<form method="POST" action="{{ url_for('settings') }}">
+    {{ settings_form.hidden_tag() }}
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <label for="config" class="form-label display-6">{{ settings_form.config.label }}</label>
+        </div>
+        <div class="col-md-9">
+            {{ settings_form.config(class="form-control border-2 border-primary-subtle", id="config",
+            rows=20) }}
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <label for="important_dates" class="form-label display-6">{{ settings_form.important_dates.label }}</label>
+        </div>
+        <div class="col-md-9">
+            {{ settings_form.important_dates(class="form-control border-2 border-primary-subtle", id="important_dates",
+            rows=15) }}
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <label for="notes" class="form-label display-6">{{ settings_form.notes.label }}</label>
+        </div>
+        <div class="col-md-9">
+            {{ settings_form.notes(class="form-control border-2 border-primary-subtle", id="notes",
+            rows=20) }}
+        </div>
+    </div>
+    <div class="mb-3">
+        {{ settings_form.submit(class="btn btn-primary") }}
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,77 @@
+{
+  "SITE_NAME": "Vidura",
+  "SQLALCHEMY_DATABASE_URI": "",
+  "SECRET_KEY": "",
+  "db_initialized": "false",
+  "task_form_configuration": {
+    "RESOURCE_CHOICES": [
+      {
+        "label": "",
+        "value": "None"
+      },
+      {
+        "label": "Productive",
+        "value": "P"
+      },
+      {
+        "label": "Self",
+        "value": "S"
+      }
+    ],
+    "PRIORITY_CHOICES": [
+      {
+        "label": "",
+        "value": "None"
+      },
+      {
+        "label": "Low",
+        "value": "Low"
+      },
+      {
+        "label": "Medium",
+        "value": "Medium"
+      },
+      {
+        "label": "High",
+        "value": "High"
+      }
+    ],
+    "PROGRESS_CHOICES": [
+      {
+        "label": "",
+        "value": "None"
+      },
+      {
+        "label": "Completed",
+        "value": "Completed"
+      },
+      {
+        "label": "Blocked",
+        "value": "Blocked"
+      },
+      {
+        "label": "Ongoing",
+        "value": "Ongoing"
+      },
+      {
+        "label": "Not Started",
+        "value": "Not Started"
+      },
+      {
+        "label": "Dropped",
+        "value": "Dropped"
+      }
+    ],
+    "CATEGORY_CHOICES": [
+      {
+        "label": "",
+        "value": "None"
+      },
+      {
+        "label": "Development",
+        "value": "Development"
+      }
+    ]
+  },
+  "daily_log_form_configuration": ""
+}

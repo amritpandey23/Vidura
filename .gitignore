@@ -1,0 +1,9 @@
+.idea
+.venv
+__pycache__/
+migrations/
+*.db
+config.py
+tracker/data/config.json
+tracker/data/important_dates.json
+tracker/data/notes.json
