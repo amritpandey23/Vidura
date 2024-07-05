@@ -2,7 +2,15 @@ from flask_wtf import FlaskForm
 from wtforms import SelectMultipleField, TextAreaField, SubmitField, SelectField
 from wtforms.validators import Optional
 
-RESOURCE_CHOICES = [("None", ""), ("P", "Productive"), ("S", "Self")]
+from tracker import app
+from tracker.utils2 import get_or_initialize_config
+
+config = get_or_initialize_config(app)
+
+RESOURCE_CHOICES = [
+    (item["value"], item["label"])
+    for item in config["task_form_configuration"]["RESOURCE_CHOICES"]
+]
 
 
 class DailyLogForm(FlaskForm):
