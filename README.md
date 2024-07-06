@@ -28,6 +28,8 @@ Vidura is a web app that runs locally, so you'll need to set it up manually.
 
 ## Customization
 
+Changes can be made to the app by changing the available settings in the `/settings` route. For app level settings changes a manual restart of the app is required.
+
 ### Database File
 
 By default, the database is stored in the user directory under the name `site.db`. You can also navigate to the `/settings` route to find the exact directory path in the settings section.
