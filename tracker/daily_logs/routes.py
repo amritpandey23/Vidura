@@ -11,7 +11,9 @@ daily_logs = Blueprint("logs", __name__, url_prefix="/logs")
 @daily_logs.route("/")
 def logs():
     page = request.args.get("page", 1, type=int)
-    logs = Log.query.order_by(Log.date.desc()).paginate(page=page, per_page=10)
+    logs = Log.query.order_by(Log.date.desc(), Log.id.desc()).paginate(
+        page=page, per_page=10
+    )
     return render("logs.html", logs=logs)
 
 

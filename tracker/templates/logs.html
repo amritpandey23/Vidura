@@ -44,7 +44,12 @@
             <i class="fa-solid fa-chevron-down"></i>
         </button>
         <div class="collapse" id="collapse-{{log.id}}">
-            <pre>{{ log.explanation }}</pre>
+            <h4>Activity: </h4>
+            <pre style="overflow-x: scroll;">{{ log.explanation }}</pre>
+            {% if log.blockers %}
+            <h4 class="text-danger">Blockers: </h4>
+            <pre style="overflow-x: scroll;">{{ log.blockers }}</pre>
+            {% endif %}
         </div>
 
     </div>
