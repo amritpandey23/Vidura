@@ -8,6 +8,7 @@ from wtforms import (
     DateField,
     IntegerField,
 )
+from datetime import date
 from wtforms.validators import Optional, DataRequired, Length
 
 from tracker import app
@@ -16,36 +17,83 @@ from tracker.utils2 import get_or_initialize_config
 
 config = get_or_initialize_config(app)
 
-RESOURCE_CHOICES = [(item['value'], item['label']) for item in config["task_form_configuration"]['RESOURCE_CHOICES']]
-CATEGORY_CHOICES = [(item['value'], item['label']) for item in config["task_form_configuration"]['CATEGORY_CHOICES']]
-PROGRESS_CHOICES = [(item['value'], item['label']) for item in config["task_form_configuration"]['PROGRESS_CHOICES']]
-PRIORITY_CHOICES = [(item['value'], item['label']) for item in config["task_form_configuration"]['PRIORITY_CHOICES']]
+RESOURCE_CHOICES = [
+    (item["value"], item["label"])
+    for item in config["task_form_configuration"]["RESOURCE_CHOICES"]
+]
+CATEGORY_CHOICES = [
+    (item["value"], item["label"])
+    for item in config["task_form_configuration"]["CATEGORY_CHOICES"]
+]
+PROGRESS_CHOICES = [
+    (item["value"], item["label"])
+    for item in config["task_form_configuration"]["PROGRESS_CHOICES"]
+]
+PRIORITY_CHOICES = [
+    (item["value"], item["label"])
+    for item in config["task_form_configuration"]["PRIORITY_CHOICES"]
+]
+
+
+def get_default_value(choices):
+    for item in choices:
+        if item.get("default") == "true":
+            return item["value"]
+    return None
+
+
+RESOURCE_DEFAULT = get_default_value(
+    config["task_form_configuration"]["RESOURCE_CHOICES"]
+)
+CATEGORY_DEFAULT = get_default_value(
+    config["task_form_configuration"]["CATEGORY_CHOICES"]
+)
+PROGRESS_DEFAULT = get_default_value(
+    config["task_form_configuration"]["PROGRESS_CHOICES"]
+)
+PRIORITY_DEFAULT = get_default_value(
+    config["task_form_configuration"]["PRIORITY_CHOICES"]
+)
 
 
 class TaskForm(FlaskForm):
     name = StringField("Title", validators=[DataRequired(), Length(max=120)])
     description = TextAreaField("Description")
 
-    date_of_allotment = DateField("Date of Allotment", validators=[DataRequired()])
+    date_of_allotment = DateField(
+        "Date of Allotment", default=date.today, validators=[DataRequired()]
+    )
     due_date = DateField("Due Date", validators=[Optional()])
 
     category = SelectField(
-        "Category", choices=CATEGORY_CHOICES, validators=[DataRequired()]
+        "Category",
+        choices=CATEGORY_CHOICES,
+        default=CATEGORY_DEFAULT,
+        validators=[DataRequired()],
     )
 
     resource_type = SelectField(
-        "Resource Type", choices=RESOURCE_CHOICES, validators=[DataRequired()]
+        "Resource Type",
+        choices=RESOURCE_CHOICES,
+        default=RESOURCE_DEFAULT,
+        validators=[DataRequired()],
     )
 
     progress_status = SelectField(
-        "Progress Status", choices=PROGRESS_CHOICES, validators=[DataRequired()]
+        "Progress Status",
+        choices=PROGRESS_CHOICES,
+        default=PROGRESS_DEFAULT,
+        validators=[DataRequired()],
     )
 
     priority = SelectField(
-        "Priority", choices=PRIORITY_CHOICES, validators=[DataRequired()]
+        "Priority",
+        choices=PRIORITY_CHOICES,
+        default=PRIORITY_DEFAULT,
+        validators=[DataRequired()],
     )
 
-    progress_counter = IntegerField("Progress", validators=[DataRequired()])
+    progress_counter = IntegerField("Progress", validators=[DataRequired()], default=1)
 
     blockers = TextAreaField("Blockers")
     external_link = TextAreaField("External Link")
