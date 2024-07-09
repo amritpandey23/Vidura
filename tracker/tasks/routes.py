@@ -116,6 +116,16 @@ def filter_tasks():
 
 @tasks.route("/", methods=["GET", "POST"])
 def all_tasks():
+
+    # Searching tasks
+    query = request.args.get("query")
+
+    if query:
+        tasks = Task.query.filter(Task.name.ilike(f"%{query}%")).all()
+        return render(
+            "all_tasks.html", tasks=tasks, datetime=datetime, search_term=query
+        )
+
     page = request.args.get("page", 1, type=int)
     per_page = 15
 

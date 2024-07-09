@@ -23,6 +23,7 @@ from tracker.tasks.models import Task
 from tracker.tasks.forms import TaskForm, TaskFilterForm
 from tracker.daily_logs.forms import DailyLogForm
 
+
 @app.before_request
 def initialize_db():
     config = get_or_initialize_config(app)
@@ -31,6 +32,7 @@ def initialize_db():
         db.create_all()
         config["db_initialized"] = "true"
         persist_config_json(app, "config", json.dumps(config, indent=4))
+
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -64,10 +66,6 @@ def home():
     tasks = sorted(
         incomplete_tasks, key=lambda task: task.date_of_allotment, reverse=True
     )
-    query = request.args.get("query")
-
-    if query:
-        tasks = Task.query.filter(Task.name.ilike(f"%{query}%")).all()
 
     dates = json.loads(fetch_config_json(app, "important_dates"))
     notes = json.loads(fetch_config_json(app, "notes"))
