@@ -6,6 +6,10 @@ from tracker.daily_logs.models import Log
 from tracker.utils import render
 
 daily_logs = Blueprint("logs", __name__, url_prefix="/logs")
+from tracker import app
+from tracker.utils2 import get_or_initialize_config
+
+config = get_or_initialize_config(app)
 
 
 @daily_logs.route("/")
@@ -14,7 +18,11 @@ def logs():
     logs = Log.query.order_by(Log.date.desc(), Log.id.desc()).paginate(
         page=page, per_page=10
     )
-    return render("logs.html", logs=logs)
+    RESOURCE_CHOICES = [
+        (item["value"], item["label"])
+        for item in config["task_form_configuration"]["RESOURCE_CHOICES"]
+    ]
+    return render("logs.html", logs=logs, RESOURCE_CHOICES=RESOURCE_CHOICES)
 
 
 @daily_logs.route("/add_log", methods=["POST"])

@@ -9,11 +9,11 @@
     <div class="log-card-metainfo d-flex mb-2">
         <div style="text-transform: uppercase; padding: 0.5rem 1rem; font-weight: 600;"
             class="log-card-meta-item bg-primary text-white resource-type">
-            {% if log.resource_type == 'P' %}
-            Productive
-            {% else %}
-            Self
+            {% for attr, val in RESOURCE_CHOICES %}
+            {% if attr == log.resource_type %}
+            {{ val }}
             {% endif %}
+            {% endfor %}
         </div>
         <div style="text-transform: uppercase; padding: 0.5rem 1rem; font-weight: 600;"
             class="log-card-meta-item bg-success text-white">
