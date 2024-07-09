@@ -1,5 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import SelectMultipleField, TextAreaField, SubmitField, SelectField
+from wtforms import (
+    SelectMultipleField,
+    TextAreaField,
+    SubmitField,
+    SelectField,
+    DateField,
+)
 from wtforms.validators import Optional, DataRequired
 
 from tracker import app
@@ -21,6 +27,7 @@ class DailyLogForm(FlaskForm):
             for task in incomplete_tasks
         ]
 
+    log_date = DateField("Log Date", validators=[Optional()])
     tasks = SelectMultipleField("Tasks", validators=[Optional()])
     resource_type = SelectField(
         "Resource Type", choices=RESOURCE_CHOICES, validators=[Optional()]

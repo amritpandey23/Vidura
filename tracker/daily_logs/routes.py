@@ -28,6 +28,7 @@ def add_log():
             task_ids=task_ids,
             explanation=form.explanation.data,
             blockers=form.blockers.data,
+            date=form.log_date.data,
         )
         try:
             db.session.add(log)

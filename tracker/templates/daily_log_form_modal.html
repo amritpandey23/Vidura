@@ -9,6 +9,11 @@
                 <form method="POST" action="{{ url_for('logs.add_log') }}">
                     {{ daily_log_form.hidden_tag() }}
 
+                    <div class="mb-3">
+                        {{ daily_log_form.log_date.label(class="form-label") }}
+                        {{ daily_log_form.log_date(class="form-control") }}
+                    </div>
+
                     <!-- Resource Type -->
                     <div class="mb-3">
                         {{ daily_log_form.resource_type.label(class="form-label") }}
@@ -17,7 +22,7 @@
 
                     <div class="mb-3">
                         {{ daily_log_form.tasks.label(class="form-label") }}
-                        {{ daily_log_form.tasks(class="form-select", style="min-height:400px;") }}
+                        {{ daily_log_form.tasks(class="form-select", style="min-height:300px;") }}
                     </div>
 
                     <!-- Explanation -->
