@@ -97,6 +97,8 @@ def filter_tasks():
         date_of_allotment_end = form.date_of_allotment_end.data
         due_date_start = form.due_date_start.data
         due_date_end = form.due_date_end.data
+        close_date_start = form.close_date_start.data
+        close_date_end = form.close_date_end.data
         return redirect(
             url_for(
                 "tasks.all_tasks",
@@ -109,6 +111,8 @@ def filter_tasks():
                 date_of_allotment_start=date_of_allotment_start,
                 due_date_start=due_date_start,
                 due_date_end=due_date_end,
+                close_date_start=close_date_start,
+                close_date_end=close_date_end,
             )
         )
     return redirect(url_for("home", back=request.path))
@@ -139,15 +143,8 @@ def all_tasks():
         date_of_allotment_end = request.args.get("date_of_allotment_end")
         due_date_start = request.args.get("due_date_start")
         due_date_end = request.args.get("due_date_end")
-
-        print(resource_type)
-        print(categories)
-        print(categories)
-        print(progress_status)
-        print(date_of_allotment_end)
-        print(date_of_allotment_start)
-        print(due_date_end)
-        print(due_date_start)
+        close_date_start = request.args.get("close_date_start")
+        close_date_end = request.args.get("close_date_end")
 
         query = Task.query.filter(Task.archive_status == False)
         if resource_type != "None" and resource_type != "":
@@ -170,6 +167,13 @@ def all_tasks():
             )
             query = query.filter(
                 or_(Task.due_date == None, Task.due_date <= due_date_end)
+            )
+        if close_date_start and close_date_end:
+            query = query.filter(
+                or_(Task.close_date == None, Task.close_date >= close_date_start)
+            )
+            query = query.filter(
+                or_(Task.close_date == None, Task.close_date <= close_date_end)
             )
 
         tasks = query.order_by(Task.date_of_allotment.desc())
