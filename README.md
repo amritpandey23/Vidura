@@ -42,6 +42,39 @@ Important dates can be added in a JSON file, which can be edited via the `/setti
 
 To add notes, such as important links or other information on home page, use the JSON field in the `/settings` route. An example format is provided.
 
+Here's an improved version of your development guide:
+
+## Development Guide
+
+Welcome to the development guide for our project. This guide will help you understand how to contribute effectively.
+
+### Creating Pull Requests and Issues
+
+- **Creating Issues**: Navigate to the Issues tab and create a new issue. Ensure you add appropriate labels such as `enhancement`, `bug`, etc. Only collaborators can add version labels.
+- **Creating Pull Requests**:
+  1. Fork this repository.
+  2. Create a pull request (PR) against the latest development or fix branch.
+  3. Do not create PRs for the master branch.
+
+### Release Versions
+
+We follow the `MAJOR.MINOR.PATCH` versioning convention:
+
+- **Bug Fixes**:
+  - Branch naming convention: `Fix-x.y.z`.
+  - Example: If the current release is `1.0.0`, the bug fix branch will be `Fix-1.0.1`.
+- **Minor Releases and Development**:
+  - Branch naming convention: `Develop-x.y.z`.
+  - Example: If the current release is `1.0.1` or `1.0.0`, the minor development branch will be `Develop-1.1.1` or `Develop-1.1.0`.
+
+Each minor development and fix branch is closed weekly, after which the version is incremented by one. For major release there is no timeline. Usually the work on the major branch will go parallely with the other branches.
+
+### Changelog
+
+- Update the `changelog.md` file in the root directory with a description of changes made in each PR.
+
+Feel free to reach out with any questions or feedback. Happy coding!
+
 ## License
 
 Released under MIT License
