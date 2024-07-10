@@ -1,3 +1,4 @@
+from datetime import date
 from flask_wtf import FlaskForm
 from wtforms import (
     SelectMultipleField,
@@ -35,3 +36,13 @@ class DailyLogForm(FlaskForm):
     explanation = TextAreaField("Explanation", validators=[DataRequired()])
     blockers = TextAreaField("Blockers", validators=[Optional()])
     submit = SubmitField("Log")
+
+
+class LogsCompilationForm(FlaskForm):
+    start_date = DateField(
+        "Start Date", validators=[DataRequired()], default=date.today, format="%Y-%m-%d"
+    )
+    end_date = DateField(
+        "End Date", validators=[DataRequired()], default=date.today, format="%Y-%m-%d"
+    )
+    submit = SubmitField("Compile")
