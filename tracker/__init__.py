@@ -71,7 +71,7 @@ def home():
     notes = json.loads(fetch_config_json(app, "notes"))
     config = get_or_initialize_config(app)
     RESOURCE_CHOICES = [
-        (item["value"], item["label"], item["fa_icon_id"])
+        (item["value"], item["label"], item.get("fa_icon_id", "fa-circle"))
         for item in config["task_form_configuration"]["RESOURCE_CHOICES"]
         if item["label"]
     ]
