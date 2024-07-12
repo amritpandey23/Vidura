@@ -69,7 +69,21 @@ def home():
 
     dates = json.loads(fetch_config_json(app, "important_dates"))
     notes = json.loads(fetch_config_json(app, "notes"))
-    return render("home.html", tasks=tasks, datetime=datetime, dates=dates, notes=notes)
+    config = get_or_initialize_config(app)
+    RESOURCE_CHOICES = [
+        (item["value"], item["label"], item["fa_icon_id"])
+        for item in config["task_form_configuration"]["RESOURCE_CHOICES"]
+        if item["label"]
+    ]
+
+    return render(
+        "home.html",
+        tasks=tasks,
+        datetime=datetime,
+        dates=dates,
+        notes=notes,
+        RESOURCE_CHOICES=RESOURCE_CHOICES,
+    )
 
 
 from tracker.tasks.routes import tasks

@@ -2,9 +2,6 @@
 {% block content %}
 
 <div class="row my-4">
-
-
-
     <div class="col-3">
         {% for date in dates %}
         <div class="card mb-4 bg-secondary-subtle text-dark">
@@ -48,29 +45,28 @@
     </div>
 
     <div class="col-9">
-
         <ul class="nav nav-tabs" id="taskTabs" role="tablist">
+            {% for value, label, icon_id in RESOURCE_CHOICES %}
+            {% if label != "" %}
+            {% set task_count = tasks | selectattr('resource_type', 'equalto', value) | list | length %}
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="productive-tab" data-bs-toggle="tab"
-                    data-bs-target="#productiveTask" type="button" role="tab" aria-controls="productiveTask"
-                    aria-selected="true">
-                    <i class="fa-solid fa-briefcase"></i> Productive tasks
+                <button class="nav-link {% if loop.first %}active{% endif %}" id="{{ label }}-tab" data-bs-toggle="tab"
+                    data-bs-target="#{{ label }}Task" type="button" role="tab" aria-controls="{{ label }}Task"
+                    aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+                    <i class="fa-solid {{ icon_id }}"></i> {{ label }} Tasks ({{ task_count }})
                 </button>
             </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="self-tab" data-bs-toggle="tab" data-bs-target="#selfTask" type="button"
-                    role="tab" aria-controls="selfTask" aria-selected="false">
-                    <i class="fa-solid fa-chart-line"></i> Self tasks
-                </button>
-            </li>
+            {% endif %}
+            {% endfor %}
         </ul>
-
-
         <div class="tab-content mb-4" id="taskTabsContent">
-            <div class="tab-pane fade show active" id="productiveTask" role="tabpanel" aria-labelledby="productive-tab">
+            {% for value, label, icon_id in RESOURCE_CHOICES %}
+            {% if label %}
+            <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="{{ label }}Task" role="tabpanel"
+                aria-labelledby="{{ label }}-tab">
                 <div class="row container">
                     {% for task in tasks %}
-                    {% if task.resource_type == "P" %}
+                    {% if task.resource_type == value %}
                     <div class="col-12 card py-2 mt-3 shadow-sm bg-light">
                         <div class="d-flex justify-content-between">
                             <div class="d-flex align-items-center">
@@ -78,18 +74,17 @@
                                     class="badge {{ 'bg-danger' if task.priority == 'High' else 'bg-warning text-dark' if task.priority == 'Medium' else 'bg-primary text-white' }}">
                                     <i class="fa-regular fa-square-caret-up"></i></span>
                                 <span style="margin-right: 5px" class="badge rounded-pill text-bg-secondary">{{
-                                    task.category
-                                    }}</span>
+                                    task.category }}</span>
                                 <a class="link-body-emphasis link-offset-1"
                                     href="{{ url_for('tasks.view_task', task_id=task.id) }}" target="_blank">{{
                                     task.name }}</a>
                             </div>
                             <div class="d-flex align-items-center">
                                 {% if task.due_date and task.progress_status != 'Completed' %}
-                                <span class="d-flex align-items-center" style="margin-right: 5px"
-                                    class="list-group-item"><span class="badge rounded-pill bg-dark">{{
-                                        (task.due_date -
-                                        datetime.date.today()).days }} days remaining</span></span>
+                                <span class="d-flex align-items-center" style="margin-right: 5px">
+                                    <span class="badge rounded-pill bg-dark">{{ (task.due_date -
+                                        datetime.date.today()).days }} days remaining</span>
+                                </span>
                                 {% endif %}
                                 <span style="margin-right: 5px"
                                     class="badge rounded-pill {{ 'bg-secondary text-white' if task.progress_status == 'Not Started' else 'bg-primary text-white' if task.progress_status == 'Ongoing' else 'bg-success text-white' if task.progress_status == 'Completed' else 'bg-danger text-white' }}">
@@ -97,7 +92,7 @@
                                 <div class="btn-group" role="group" aria-label="Actions">
                                     {% if task.external_link %}
                                     <a href="{{ task.external_link }}" target="_blank"
-                                        class="btn btn-sm btn-outline-primary" target="_blank"><i
+                                        class="btn btn-sm btn-outline-primary"><i
                                             class="fa-solid fa-arrow-up-right-from-square"></i></a>
                                     {% endif %}
                                     <a href="{{ url_for('tasks.edit_task', task_id=task.id, back=request.path) }}"
@@ -113,66 +108,15 @@
                                 aria-valuenow="{{ task.progress_counter }}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </div>
-
-
                     {% endif %}
                     {% endfor %}
                 </div>
             </div>
-            <div class="tab-pane fade" id="selfTask" role="tabpanel" aria-labelledby="self-tab">
-                <div class="row container">
-                    {% for task in tasks %}
-                    {% if task.resource_type == "S" %}
-                    <div class="col-12 card py-2 mt-3 shadow-sm bg-light">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex align-items-center">
-                                <span style="margin-right: 5px"
-                                    class="badge {{ 'bg-danger' if task.priority == 'High' else 'bg-warning text-dark' if task.priority == 'Medium' else 'bg-primary text-white' }}">
-                                    <i class="fa-regular fa-square-caret-up"></i></span>
-                                <span style="margin-right: 5px" class="badge rounded-pill text-bg-secondary">{{
-                                    task.category
-                                    }}</span>
-                                <a class="link-body-emphasis link-offset-1"
-                                    href="{{ url_for('tasks.view_task', task_id=task.id) }}" target="_blank">{{
-                                    task.name }}</a>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                {% if task.due_date %}
-                                <span class="d-flex align-items-center" style="margin-right: 5px"
-                                    class="list-group-item"><span class="badge rounded-pill bg-dark">{{
-                                        (task.due_date -
-                                        datetime.date.today()).days }} days remaining</span></span>
-                                {% endif %}
-                                <span style="margin-right: 5px"
-                                    class="badge rounded-pill {{ 'bg-secondary text-white' if task.progress_status == 'Not Started' else 'bg-primary text-white' if task.progress_status == 'Ongoing' else 'bg-success text-white' if task.progress_status == 'Completed' else 'bg-danger text-white' }}">
-                                    {{ task.progress_status }}</span>
-                                <div class="btn-group" role="group" aria-label="Actions">
-                                    {% if task.external_link %}
-                                    <a href="{{ task.external_link }}" target="_blank"
-                                        class="btn btn-sm btn-outline-primary" target="_blank"><i
-                                            class="fa-solid fa-arrow-up-right-from-square"></i></a>
-                                    {% endif %}
-                                    <a href="{{ url_for('tasks.edit_task', task_id=task.id) }}"
-                                        class="btn btn-sm btn-primary"><i class="fa-solid fa-pencil"></i></a>
-                                    <button type="button" class="btn btn-sm btn-danger delete-task-btn"
-                                        data-task-id="{{ task.id }}"><i class="fa-solid fa-trash"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 progress mt-1" style="height: 7px;">
-                            <div class="progress-bar bg-success" role="progressbar"
-                                style="width: {{ task.progress_counter }}%; height: 7px;"
-                                aria-valuenow="{{ task.progress_counter }}" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
+            {% endif %}
+            {% endfor %}
         </div>
 
     </div>
-
 </div>
 
 {% endblock %}
