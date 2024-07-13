@@ -3,6 +3,9 @@
 
 <h2 class="display-2 mb-4">Daily Logs</h2>
 
+<a style="cursor: pointer;" class="btn btn-primary btn-sm  mx-2" data-bs-toggle="modal"
+    data-bs-target="#logsCompilationFormModal"><i class="fa-solid fa-file-zipper"></i> Compile Logs</a>
+
 {% for log in logs.items %}
 
 <div class="log-card d-flex flex-column mb-4 mt-4 bg-body-secondary">
@@ -45,10 +48,10 @@
         </button>
         <div class="collapse" id="collapse-{{log.id}}">
             <h4>Activity: </h4>
-            <pre style="overflow-x: scroll;">{{ log.explanation }}</pre>
+            <div style="overflow-x: scroll;">{{ markdowner.convert(log.explanation) | safe }}</div>
             {% if log.blockers %}
             <h4 class="text-danger">Blockers: </h4>
-            <pre style="overflow-x: scroll;">{{ log.blockers }}</pre>
+            <div style="overflow-x: scroll;">{{ markdowner.convert(log.blockers) | safe }}</div>
             {% endif %}
         </div>
 
@@ -88,4 +91,6 @@
     <!-- End Pagination -->
     {% endif %}
 </div>
+
+{% include "daily_log_compilation_form.html" %}
 {% endblock %}

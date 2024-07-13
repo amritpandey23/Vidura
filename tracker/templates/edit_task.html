@@ -1,71 +1,99 @@
 {% extends "_layout.html" %}
 {% block content %}
-<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-  <div class="container" style="max-width: 720px;">
-    <h3>Edit Task</h3>
-    <form method="post">
-      {{ edit_task_form.hidden_tag() }}
-      <div class="mb-3">
-        {{ edit_task_form.name.label(class="form-label") }}
-        {{ edit_task_form.name(class="form-control") }}
-      </div>
-      <div class="mb-3">
-        {{ edit_task_form.description.label(class="form-label") }}
-        {{ edit_task_form.description(class="form-control") }}
-      </div>
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          {{ edit_task_form.date_of_allotment.label(class="form-label") }}
-          {{ edit_task_form.date_of_allotment(class="form-control") }}
-        </div>
-        <div class="col-md-6 mb-3">
-          {{ edit_task_form.due_date.label(class="form-label") }}
-          {{ edit_task_form.due_date(class="form-control") }}
-        </div>
-      </div>
-      <div class="mb-3">
-        {{ edit_task_form.priority.label(class="form-label") }}
-        {{ edit_task_form.priority(class="form-select") }}
-      </div>
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          {{ edit_task_form.category.label(class="form-label") }}
-          {{ edit_task_form.category(class="form-select") }}
-        </div>
-        <div class="col-md-6 mb-3">
-          {{ edit_task_form.resource_type.label(class="form-label") }}
-          {{ edit_task_form.resource_type(class="form-select") }}
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          {{ edit_task_form.progress_status.label(class="form-label") }}
-          {{ edit_task_form.progress_status(class="form-select") }}
-        </div>
-        <div class="col-md-6 mb-3">
-          {{ edit_task_form.progress_counter.label(class="form-label") }}
-          {{ edit_task_form.progress_counter(class="form-control") }}
-        </div>
-      </div>
-      <div class="mb-3">
-        {{ edit_task_form.blockers.label(class="form-label") }}
-        {{ edit_task_form.blockers(class="form-control") }}
-      </div>
-      <div class="mb-3">
-        {{ edit_task_form.external_link.label(class="form-label") }}
-        {{ edit_task_form.external_link(class="form-control") }}
-      </div>
-      <div class="mb-3">
-        {{ edit_task_form.close_date.label(class="form-label") }}
-        {{ edit_task_form.close_date(class="form-control") }}
-      </div>
-      <div class="row mb-3">
-        <div class="col-sm-10 offset-sm-2">
-          {{ edit_task_form.submit(class="btn btn-sm btn-primary", value="Save") }}
-          <a href="{{ back }}" class="btn btn-sm btn-secondary">Cancel</a>
-        </div>
-      </div>
-    </form>
-  </div>
+
+<div class="container my-3">
+	<form method="post">
+		{{ edit_task_form.hidden_tag() }}
+		<div class="row">
+			<div class="col-md-8">
+				<div class="mb-3">
+					{{ edit_task_form.name.label(class="form-label") }}
+					{{ edit_task_form.name(class="form-control") }}
+				</div>
+				<div class="mb-3" style="min-height: 300px;">
+					{{ edit_task_form.description.label(class="form-label") }}
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" id="edit-tab" data-bs-toggle="tab" href="#Edit" role="tab"
+								aria-controls="Edit" aria-selected="true">Edit</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="preview-tab" data-bs-toggle="tab" href="#Preview" role="tab"
+								aria-controls="Preview" aria-selected="false">Preview</a>
+						</li>
+					</ul>
+					<div class="tab-content mt-3" style="min-height: 300px;">
+						<div class="tab-pane fade show active" id="Edit" role="tabpanel" aria-labelledby="edit-tab">
+							<div class="form-group">
+								{{ edit_task_form.description(only_input=True, rows=10, class="form-control
+								edit-pane", style="height: 520px; overflow-y: scroll;")
+								}}
+							</div>
+						</div>
+						<div class="tab-pane fade" id="Preview" role="tabpanel" aria-labelledby="preview-tab">
+							<div class="preview-pane border border-1 px-4 py-2"
+								style="height: 520px; overflow-y: scroll;">
+								{{ edit_task_form.description(only_preview=True) }}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="mb-3">
+					{{ edit_task_form.blockers.label(class="form-label") }}
+					{{ edit_task_form.blockers(class="form-control") }}
+				</div>
+				<div class="mb-3">
+					{{ edit_task_form.external_link.label(class="form-label") }}
+					{{ edit_task_form.external_link(class="form-control") }}
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="row">
+					<div class="col-md-6 mb-3">
+						{{ edit_task_form.date_of_allotment.label(class="form-label") }}
+						{{ edit_task_form.date_of_allotment(class="form-control") }}
+					</div>
+					<div class="col-md-6 mb-3">
+						{{ edit_task_form.due_date.label(class="form-label") }}
+						{{ edit_task_form.due_date(class="form-control") }}
+					</div>
+				</div>
+				<div class="mb-3">
+					{{ edit_task_form.priority.label(class="form-label") }}
+					{{ edit_task_form.priority(class="form-select") }}
+				</div>
+				<div class="row">
+					<div class="col-md-6 mb-3">
+						{{ edit_task_form.category.label(class="form-label") }}
+						{{ edit_task_form.category(class="form-select") }}
+					</div>
+					<div class="col-md-6 mb-3">
+						{{ edit_task_form.resource_type.label(class="form-label") }}
+						{{ edit_task_form.resource_type(class="form-select") }}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6 mb-3">
+						{{ edit_task_form.progress_status.label(class="form-label") }}
+						{{ edit_task_form.progress_status(class="form-select") }}
+					</div>
+					<div class="col-md-6 mb-3">
+						{{ edit_task_form.progress_counter.label(class="form-label") }}
+						{{ edit_task_form.progress_counter(class="form-control") }}
+					</div>
+				</div>
+
+				<div class="mb-3">
+					{{ edit_task_form.close_date.label(class="form-label") }}
+					{{ edit_task_form.close_date(class="form-control") }}
+				</div>
+
+			</div>
+		</div>
+		<div class="mb-3">
+			{{ edit_task_form.submit(class="btn btn-sm btn-primary", value="Save") }}
+			<a href="{{ back }}" class="btn btn-sm btn-secondary">Cancel</a>
+		</div>
+	</form>
 </div>
 {% endblock %}

@@ -56,6 +56,18 @@
                         </div>
                     </div>
 
+                    <div class="mb-3">
+                        <label>Close date between</label>
+                        <div class="row">
+                            <div class="col">
+                                {{ task_filter_form.close_date_start(class="form-control") }}
+                            </div>
+                            <div class="col">
+                                {{ task_filter_form.close_date_end(class="form-control") }}
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="mb-3 d-flex justify-content-end">
                         <div class="btn-group" role="group" aria-label="Filter actions">
                             {{ task_filter_form.submit(class="btn btn-sm btn-primary") }}

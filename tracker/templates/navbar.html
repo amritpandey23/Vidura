@@ -6,8 +6,9 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse d-flex justify-content-center" id="navbarNavAltMarkup">
-            <form class="d-flex" action="{{ url_for('home') }}" method="GET">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="query">
+            <form class="d-flex" action="{{ url_for('tasks.all_tasks') }}" method="GET">
+                <input class="form-control me-2" type="search" placeholder="Search tasks..." aria-label="Search"
+                    name="query" value="{{search_term}}">
                 <button class="btn btn-outline-light" type="submit"><i
                         class="fa-solid fa-magnifying-glass"></i></button>
             </form>

@@ -1,5 +1,5 @@
 <div class="modal fade" tabindex="-1" id="dailyLogModal" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="min-width: 1080px;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Daily Log</h5>
@@ -8,38 +8,91 @@
             <div class="modal-body">
                 <form method="POST" action="{{ url_for('logs.add_log') }}">
                     {{ daily_log_form.hidden_tag() }}
+                    <div class="row">
 
-                    <div class="mb-3">
-                        {{ daily_log_form.log_date.label(class="form-label") }}
-                        {{ daily_log_form.log_date(class="form-control") }}
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                {{ daily_log_form.log_date.label(class="form-label") }}
+                                {{ daily_log_form.log_date(class="form-control") }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ daily_log_form.resource_type.label(class="form-label") }}
+                                {{ daily_log_form.resource_type(class="form-select") }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ daily_log_form.tasks.label(class="form-label") }}
+                                {{ daily_log_form.tasks(class="form-select", style="min-height:400px; overflow-x:
+                                scroll") }}
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            {{ daily_log_form.explanation.label(class="form-label") }}
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="edit-tab" data-bs-toggle="tab" href="#EditLog"
+                                        role="tab" aria-controls="Edit" aria-selected="true">Edit</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="preview-tab" data-bs-toggle="tab" href="#PreviewLog"
+                                        role="tab" aria-controls="Preview" aria-selected="false">Preview</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" style="min-height: 300px;">
+                                <div class="tab-pane fade show active" id="EditLog" role="tabpanel"
+                                    aria-labelledby="edit-tab">
+                                    <div class="form-group">
+                                        {{ daily_log_form.explanation(only_input=True, rows=10, class="form-control
+                                        edit-pane")
+                                        }}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="PreviewLog" role="tabpanel"
+                                    aria-labelledby="preview-tab">
+                                    <div class="preview-pane border border-1 px-2" style="overflow-y: scroll;">
+                                        {{ daily_log_form.explanation(only_preview=True, class="preview-pane") }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                {{ daily_log_form.blockers.label(class="form-label") }}
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="edit-tab" data-bs-toggle="tab"
+                                            href="#EditLogBlocker" role="tab" aria-controls="Edit"
+                                            aria-selected="true">Edit</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="preview-tab" data-bs-toggle="tab"
+                                            href="#PreviewLogBlocker" role="tab" aria-controls="Preview"
+                                            aria-selected="false">Preview</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="EditLogBlocker" role="tabpanel"
+                                        aria-labelledby="edit-tab">
+                                        <div class="form-group">
+                                            {{ daily_log_form.blockers(only_input=True, rows=5, class="form-control
+                                            edit-pane")
+                                            }}
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="PreviewLogBlocker" role="tabpanel"
+                                        aria-labelledby="preview-tab">
+                                        <div class="preview-pane border border-1 px-2" style="overflow-y: scroll;">
+                                            {{ daily_log_form.blockers(only_preview=True, class="preview-pane") }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Resource Type -->
-                    <div class="mb-3">
-                        {{ daily_log_form.resource_type.label(class="form-label") }}
-                        {{ daily_log_form.resource_type(class="form-select") }}
-                    </div>
-
-                    <div class="mb-3">
-                        {{ daily_log_form.tasks.label(class="form-label") }}
-                        {{ daily_log_form.tasks(class="form-select", style="min-height:300px;") }}
-                    </div>
-
-                    <!-- Explanation -->
-                    <div class="mb-3">
-                        {{ daily_log_form.explanation.label(class="form-label") }}
-                        {{ daily_log_form.explanation(class="form-control", rows=4) }}
-                    </div>
-
-                    <!-- Blockers -->
-                    <div class="mb-3">
-                        {{ daily_log_form.blockers.label(class="form-label") }}
-                        {{ daily_log_form.blockers(class="form-control", rows=3) }}
-                    </div>
 
 
 
-                    <!-- Submit Button -->
                     <button type="submit" class="btn btn-primary btn-sm">{{ daily_log_form.submit.label }}</button>
                 </form>
             </div>

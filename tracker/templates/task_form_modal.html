@@ -1,5 +1,5 @@
 <div class="modal fade" tabindex="-1" id="newTaskModal" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="min-width: 1080px;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Add new task</h5>
@@ -8,59 +8,95 @@
             <div class="modal-body">
                 <form method="post" action="{{ url_for('tasks.add_task') }}">
                     {{ task_form.hidden_tag() }}
-                    <div class="mb-3">
-                        {{ task_form.name.label(class="form-label") }}
-                        {{ task_form.name(class="form-control") }}
-                    </div>
-                    <div class="mb-3">
-                        {{ task_form.description.label(class="form-label") }}
-                        {{ task_form.description(class="form-control") }}
-                    </div>
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                            {{ task_form.date_of_allotment.label(class="form-label") }}
-                            {{ task_form.date_of_allotment(class="form-control") }}
+
+                        <div class="col-md-4">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ task_form.date_of_allotment.label(class="form-label") }}
+                                    {{ task_form.date_of_allotment(class="form-control") }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ task_form.due_date.label(class="form-label") }}
+                                    {{ task_form.due_date(class="form-control") }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                {{ task_form.priority.label(class="form-label") }}
+                                {{ task_form.priority(class="form-select") }}
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ task_form.category.label(class="form-label") }}
+                                    {{ task_form.category(class="form-select") }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ task_form.resource_type.label(class="form-label") }}
+                                    {{ task_form.resource_type(class="form-select") }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    {{ task_form.progress_status.label(class="form-label") }}
+                                    {{ task_form.progress_status(class="form-select") }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ task_form.progress_counter.label(class="form-label") }}
+                                    {{ task_form.progress_counter(class="form-control") }}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                {{ task_form.close_date.label(class="form-label") }}
+                                {{ task_form.close_date(class="form-control") }}
+                            </div>
+
                         </div>
-                        <div class="col-md-6 mb-3">
-                            {{ task_form.due_date.label(class="form-label") }}
-                            {{ task_form.due_date(class="form-control") }}
+                        <div class="col-md-8 border-start border-2">
+                            <div class="mb-3">
+                                {{ task_form.name.label(class="form-label") }}
+                                {{ task_form.name(class="form-control") }}
+                            </div>
+                            <div class="mb-3" style="min-height: 300px;">
+                                {{ task_form.description.label(class="form-label") }}
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="edit-tab" data-bs-toggle="tab" href="#Edit"
+                                            role="tab" aria-controls="Edit" aria-selected="true">Edit</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="preview-tab" data-bs-toggle="tab" href="#Preview"
+                                            role="tab" aria-controls="Preview" aria-selected="false">Preview</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content mt-3" style="min-height: 300px;">
+                                    <div class="tab-pane fade show active" id="Edit" role="tabpanel"
+                                        aria-labelledby="edit-tab">
+                                        <div class="form-group">
+                                            {{ task_form.description(only_input=True, rows=10, class="form-control
+                                            edit-pane")
+                                            }}
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="Preview" role="tabpanel"
+                                        aria-labelledby="preview-tab">
+                                        <div class="preview-pane border border-1 px-2"
+                                            style="height: 300px; overflow-y: scroll;">
+                                            {{ task_form.description(only_preview=True, class="form-control
+                                            preview-pane") }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                {{ task_form.blockers.label(class="form-label") }}
+                                {{ task_form.blockers(class="form-control") }}
+                            </div>
+                            <div class="mb-3">
+                                {{ task_form.external_link.label(class="form-label") }}
+                                {{ task_form.external_link(class="form-control") }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        {{ task_form.priority.label(class="form-label") }}
-                        {{ task_form.priority(class="form-select") }}
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            {{ task_form.category.label(class="form-label") }}
-                            {{ task_form.category(class="form-select") }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            {{ task_form.resource_type.label(class="form-label") }}
-                            {{ task_form.resource_type(class="form-select") }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            {{ task_form.progress_status.label(class="form-label") }}
-                            {{ task_form.progress_status(class="form-select") }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            {{ task_form.progress_counter.label(class="form-label") }}
-                            {{ task_form.progress_counter(class="form-control") }}
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        {{ task_form.blockers.label(class="form-label") }}
-                        {{ task_form.blockers(class="form-control") }}
-                    </div>
-                    <div class="mb-3">
-                        {{ task_form.external_link.label(class="form-label") }}
-                        {{ task_form.external_link(class="form-control") }}
-                    </div>
-                    <div class="mb-3">
-                        {{ task_form.close_date.label(class="form-label") }}
-                        {{ task_form.close_date(class="form-control") }}
                     </div>
                     <div class="mb-3">
                         {{ task_form.submit(class="btn btn-sm btn-primary") }}

@@ -1,12 +1,12 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from sqlalchemy import or_, desc
-import datetime, json, os
+import datetime, json
 
 from tracker.forms import SettingsForm
 from tracker.utils2 import get_or_initialize_config, persist_config_json, initialize_app
 
+from flask_pagedown import PageDown
 
 app = Flask(__name__)
 
@@ -18,10 +18,12 @@ app.config["SECRET_KEY"] = config["SECRET_KEY"]
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+pagedown = PageDown(app)
 
 from tracker.tasks.models import Task
 from tracker.tasks.forms import TaskForm, TaskFilterForm
 from tracker.daily_logs.forms import DailyLogForm
+
 
 @app.before_request
 def initialize_db():
@@ -31,6 +33,7 @@ def initialize_db():
         db.create_all()
         config["db_initialized"] = "true"
         persist_config_json(app, "config", json.dumps(config, indent=4))
+
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -64,14 +67,24 @@ def home():
     tasks = sorted(
         incomplete_tasks, key=lambda task: task.date_of_allotment, reverse=True
     )
-    query = request.args.get("query")
-
-    if query:
-        tasks = Task.query.filter(Task.name.ilike(f"%{query}%")).all()
 
     dates = json.loads(fetch_config_json(app, "important_dates"))
     notes = json.loads(fetch_config_json(app, "notes"))
-    return render("home.html", tasks=tasks, datetime=datetime, dates=dates, notes=notes)
+    config = get_or_initialize_config(app)
+    RESOURCE_CHOICES = [
+        (item["value"], item["label"], item.get("fa_icon_id", "fa-circle"))
+        for item in config["task_form_configuration"]["RESOURCE_CHOICES"]
+        if item["label"]
+    ]
+
+    return render(
+        "home.html",
+        tasks=tasks,
+        datetime=datetime,
+        dates=dates,
+        notes=notes,
+        RESOURCE_CHOICES=RESOURCE_CHOICES,
+    )
 
 
 from tracker.tasks.routes import tasks
