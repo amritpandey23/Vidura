@@ -1,3 +1,4 @@
+from datetime import date
 from flask_wtf import FlaskForm
 from wtforms import (
     TextAreaField,
@@ -8,7 +9,7 @@ from wtforms import (
     DateField,
     IntegerField,
 )
-from datetime import date
+from flask_pagedown.fields import PageDownField
 from wtforms.validators import Optional, DataRequired, Length
 
 from tracker import app
@@ -58,7 +59,7 @@ PRIORITY_DEFAULT = get_default_value(
 
 class TaskForm(FlaskForm):
     name = StringField("Title", validators=[DataRequired(), Length(max=120)])
-    description = TextAreaField("Description")
+    description = PageDownField("Description")
 
     date_of_allotment = DateField(
         "Date of Allotment", default=date.today, validators=[DataRequired()]

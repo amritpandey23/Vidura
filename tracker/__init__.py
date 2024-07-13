@@ -1,12 +1,12 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from sqlalchemy import or_, desc
-import datetime, json, os
+import datetime, json
 
 from tracker.forms import SettingsForm
 from tracker.utils2 import get_or_initialize_config, persist_config_json, initialize_app
 
+from flask_pagedown import PageDown
 
 app = Flask(__name__)
 
@@ -18,6 +18,7 @@ app.config["SECRET_KEY"] = config["SECRET_KEY"]
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+pagedown = PageDown(app)
 
 from tracker.tasks.models import Task
 from tracker.tasks.forms import TaskForm, TaskFilterForm
