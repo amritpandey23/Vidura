@@ -5,6 +5,7 @@
 ### Added
 
 - Favicon icon.
+- Markdown Support.
 
 ### Updates
 
