@@ -36,13 +36,12 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6 border-right">
+            <div class="col-md-8 border-right">
                 <h5><i class="fa-solid fa-circle-info"></i> Description</h5>
-                <p class="border py-1 px-2" style="min-height: 100px;">{{ task.description }}</p>
-                <h5><i class="fa-solid fa-ban"></i> Blockers</h5>
-                <p class="border py-1 px-2" style="min-height: 100px;">{{ task.blockers }}</p>
+                {{ markdowner.convert(task.description) | safe }}
+
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <h5><i class="fa-solid fa-bars-progress"></i> Progress</h5>
                 <div class="progress mb-3">
                     <div class="progress-bar" role="progressbar" style="width: {{ task.progress_counter }}%;"
@@ -65,6 +64,8 @@
                 <h5 class="display-6">{{ (task.due_date - datetime.date.today()).days }}</h5>
                 {% endif %}
                 {% endif %}
+                <h5><i class="fa-solid fa-ban"></i> Blockers</h5>
+                <p class="border py-1 px-2" style="min-height: 100px;">{{ task.blockers }}</p>
             </div>
         </div>
     </div>

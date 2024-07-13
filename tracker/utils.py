@@ -1,5 +1,5 @@
-import os, json
 from flask import render_template
+from markdown2 import Markdown
 
 from tracker.daily_logs.forms import DailyLogForm
 from tracker.tasks.forms import TaskFilterForm, TaskForm
@@ -8,6 +8,7 @@ from tracker import app
 
 
 def render(template_name, **args):
+    markdowner = Markdown()
     daily_log_form = DailyLogForm(get_incomplete_tasks())
     task_filter_form = TaskFilterForm()
     task_form = TaskForm()
@@ -17,6 +18,7 @@ def render(template_name, **args):
         task_filter_form=task_filter_form,
         task_form=task_form,
         site_name=app.config["SITE_NAME"],
+        markdowner=markdowner,
         **args,
     )
 

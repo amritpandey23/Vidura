@@ -8,6 +8,7 @@ from wtforms import (
     DateField,
 )
 from wtforms.validators import Optional, DataRequired
+from flask_pagedown.fields import PageDownField
 
 from tracker import app
 from tracker.utils2 import get_or_initialize_config
@@ -33,8 +34,8 @@ class DailyLogForm(FlaskForm):
     resource_type = SelectField(
         "Resource Type", choices=RESOURCE_CHOICES, validators=[Optional()]
     )
-    explanation = TextAreaField("Explanation", validators=[DataRequired()])
-    blockers = TextAreaField("Blockers", validators=[Optional()])
+    explanation = PageDownField("Explanation", validators=[DataRequired()])
+    blockers = PageDownField("Blockers", validators=[Optional()])
     submit = SubmitField("Log")
 
 
