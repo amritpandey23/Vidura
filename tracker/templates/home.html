@@ -90,15 +90,20 @@
                                     class="badge rounded-pill {{ 'bg-secondary text-white' if task.progress_status == 'Not Started' else 'bg-primary text-white' if task.progress_status == 'Ongoing' else 'bg-success text-white' if task.progress_status == 'Completed' else 'bg-danger text-white' }}">
                                     {{ task.progress_status }}</span>
                                 <div class="btn-group" role="group" aria-label="Actions">
+                                    <button class="btn btn-sm btn-secondary toggle-icon-btn" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseDescription{{ task.id }}"
+                                        aria-expanded="false" aria-controls="collapseDescription{{ task.id }}">
+                                        <i class="fa-solid fa-caret-down"></i>
+                                    </button>
+                                    <a href="{{ url_for('tasks.edit_task', task_id=task.id, back=request.path) }}"
+                                        class="btn btn-sm btn-primary"><i class="fa-solid fa-pencil"></i></a>
+                                    <button type="button" class="btn btn-sm btn-danger delete-task-btn"
+                                        data-task-id="{{ task.id }}"><i class="fa-solid fa-trash"></i></button>
                                     {% if task.external_link %}
                                     <a href="{{ task.external_link }}" target="_blank"
                                         class="btn btn-sm btn-outline-primary"><i
                                             class="fa-solid fa-arrow-up-right-from-square"></i></a>
                                     {% endif %}
-                                    <a href="{{ url_for('tasks.edit_task', task_id=task.id, back=request.path) }}"
-                                        class="btn btn-sm btn-primary"><i class="fa-solid fa-pencil"></i></a>
-                                    <button type="button" class="btn btn-sm btn-danger delete-task-btn"
-                                        data-task-id="{{ task.id }}"><i class="fa-solid fa-trash"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -106,6 +111,11 @@
                             <div class="progress-bar bg-success" role="progressbar"
                                 style="width: {{ task.progress_counter }}%; height: 7px;"
                                 aria-valuenow="{{ task.progress_counter }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div id="collapseDescription{{ task.id }}" class="collapse">
+                            <div class="col-12">
+                                {{ markdowner.convert(task.description) | safe }}
+                            </div>
                         </div>
                     </div>
                     {% endif %}
@@ -115,12 +125,33 @@
             {% endif %}
             {% endfor %}
         </div>
-
     </div>
 </div>
 
 {% endblock %}
 
 {% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleButtons = document.querySelectorAll('.toggle-icon-btn');
+        toggleButtons.forEach(button => {
+
+            const collapseElementId = button.getAttribute('data-bs-target');
+            const collapseElement = document.querySelector(collapseElementId);
+
+            collapseElement.addEventListener('show.bs.collapse', function () {
+                const icon = button.querySelector('i');
+                icon.classList.remove('fa-caret-down');
+                icon.classList.add('fa-caret-up');
+            });
+
+            collapseElement.addEventListener('hide.bs.collapse', function () {
+                const icon = button.querySelector('i');
+                icon.classList.remove('fa-caret-up');
+                icon.classList.add('fa-caret-down');
+            });
+        });
+    });
+</script>
 
 {% endblock %}
