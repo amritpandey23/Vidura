@@ -4,6 +4,7 @@
 <div class="row my-4">
     <div class="col-3">
         {% for date in dates %}
+        {% if datetime.date.fromisoformat(date.date) >= datetime.date.today() %}
         <div class="card mb-4 bg-secondary-subtle text-dark">
             <div class="card-header bg-success bg-gradient">
                 <h5 class="card-title text-white">[{{ date.release }}] {{ date.title }}</h5>
@@ -22,6 +23,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
         {% endfor %}
 
         {% for note in notes %}
