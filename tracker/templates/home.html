@@ -52,10 +52,17 @@
             {% if label != "" %}
             {% set task_count = tasks | selectattr('resource_type', 'equalto', value) | list | length %}
             <li class="nav-item" role="presentation">
-                <button class="nav-link {% if loop.first %}active{% endif %}" id="{{ label }}-tab" data-bs-toggle="tab"
-                    data-bs-target="#{{ label }}Task" type="button" role="tab" aria-controls="{{ label }}Task"
-                    aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+                <button style="position: relative;" class="nav-link {% if loop.first %}active{% endif %}"
+                    id="{{ label }}-tab" data-bs-toggle="tab" data-bs-target="#{{ label }}Task" type="button" role="tab"
+                    aria-controls="{{ label }}Task" aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
                     <i class="fa-solid {{ icon_id }}"></i> {{ label }} Tasks ({{ task_count }})
+                    {% for task in tasks %}
+                    {% if task.resource_type == value and task.due_date != None and (task.due_date -
+                    datetime.date.today()).days <= config["limit_warning_days"] %} <i
+                        style="color:red; position: absolute; top: 0; right: 0;" class="fa-solid fa-circle-exclamation">
+                        </i>
+                        {% endif %}
+                        {% endfor %}
                 </button>
             </li>
             {% endif %}
@@ -85,7 +92,14 @@
                                 {% if task.due_date and task.progress_status != 'Completed' %}
                                 <span class="d-flex align-items-center" style="margin-right: 5px">
                                     <span class="badge rounded-pill bg-dark">{{ (task.due_date -
-                                        datetime.date.today()).days }} days remaining</span>
+                                        datetime.date.today()).days }} days remaining
+
+                                        {% if (task.due_date -
+                                        datetime.date.today()).days <= config["limit_warning_days"] %} <i
+                                            style="color:red;" class="fa-solid fa-circle-exclamation">
+                                            </i>
+                                            {% endif %}
+                                    </span>
                                 </span>
                                 {% endif %}
                                 <span style="margin-right: 5px"

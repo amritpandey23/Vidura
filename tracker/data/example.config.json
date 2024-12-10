@@ -3,6 +3,7 @@
   "SQLALCHEMY_DATABASE_URI": "",
   "SECRET_KEY": "",
   "db_initialized": "false",
+  "limit_warning_days": 30,
   "openai_configurations": {
     "api_key": "your api key here",
     "temperature": 1.0,
