@@ -1,11 +1,15 @@
 from flask import render_template
 from markdown2 import Markdown
 from sqlalchemy import func
+from sqlalchemy import func
 
 from tracker.daily_logs.forms import DailyLogForm
 from tracker.tasks.forms import TaskFilterForm, TaskForm
 from tracker.tasks.models import Task
 from tracker import app
+from tracker.utils2 import initialize_app
+
+config = initialize_app(app)
 from tracker.utils2 import initialize_app
 
 config = initialize_app(app)
@@ -66,6 +70,7 @@ def get_incomplete_tasks():
         incomplete_high_priority_tasks
         + incomplete_medium_priority_tasks
         + incomplete_low_priority_tasks
+        + last_week_closed_tasks
         + last_week_closed_tasks
     )
 
