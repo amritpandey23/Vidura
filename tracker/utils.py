@@ -1,10 +1,14 @@
 from flask import render_template
 from markdown2 import Markdown
+from sqlalchemy import func
 
 from tracker.daily_logs.forms import DailyLogForm
 from tracker.tasks.forms import TaskFilterForm, TaskForm
 from tracker.tasks.models import Task
 from tracker import app
+from tracker.utils2 import initialize_app
+
+config = initialize_app(app)
 
 
 def render(template_name, **args):
@@ -42,11 +46,23 @@ def get_incomplete_tasks():
         Task.progress_status != "Dropped",
     ).all()
 
+    last_week_closed_tasks = Task.query.filter(
+        Task.progress_status != "Ongoing",
+        Task.close_date.isnot(None),  # Use isnot(None) instead of != None
+        (
+            func.julianday(func.date("now")) - func.julianday(Task.close_date)
+            <= config["open_task_log_days"]
+            if not None
+            else 7
+        ),
+    ).all()  # Fetch results
+
     # Combine incomplete tasks of different priorities
     incomplete_tasks = (
         incomplete_high_priority_tasks
         + incomplete_medium_priority_tasks
         + incomplete_low_priority_tasks
+        + last_week_closed_tasks
     )
 
     # tasks = incomplete_tasks
