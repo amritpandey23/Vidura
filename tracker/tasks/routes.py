@@ -182,3 +182,12 @@ def all_tasks():
         tasks = tasks.paginate(page=page, per_page=per_page)
 
     return render("all_tasks.html", tasks=tasks, datetime=datetime)
+
+
+@tasks.route("/category/<string:category>", methods=["GET"])
+def get_tasks_by_category(category):
+    """
+    Fetch all tasks that belong to the specified category.
+    """
+    tasks = Task.query.filter_by(category=category).all()
+    return render("all_tasks.html", tasks=tasks, datetime=datetime)
