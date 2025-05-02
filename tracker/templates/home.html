@@ -4,6 +4,7 @@
 <div class="row my-4">
     <div class="col-3">
         {% for date in dates %}
+        {% if datetime.date.fromisoformat(date.date) >= datetime.date.today() %}
         <div class="card mb-4 bg-secondary-subtle text-dark">
             <div class="card-header bg-success bg-gradient">
                 <h5 class="card-title text-white">[{{ date.release }}] {{ date.title }}</h5>
@@ -22,6 +23,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
         {% endfor %}
 
         {% for note in notes %}
@@ -50,10 +52,17 @@
             {% if label != "" %}
             {% set task_count = tasks | selectattr('resource_type', 'equalto', value) | list | length %}
             <li class="nav-item" role="presentation">
-                <button class="nav-link {% if loop.first %}active{% endif %}" id="{{ label }}-tab" data-bs-toggle="tab"
-                    data-bs-target="#{{ label }}Task" type="button" role="tab" aria-controls="{{ label }}Task"
-                    aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+                <button style="position: relative;" class="nav-link {% if loop.first %}active{% endif %}"
+                    id="{{ label }}-tab" data-bs-toggle="tab" data-bs-target="#{{ label }}Task" type="button" role="tab"
+                    aria-controls="{{ label }}Task" aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
                     <i class="fa-solid {{ icon_id }}"></i> {{ label }} Tasks ({{ task_count }})
+                    {% for task in tasks %}
+                    {% if task.resource_type == value and task.due_date != None and (task.due_date -
+                    datetime.date.today()).days <= config["limit_warning_days"] %} <i
+                        style="color:red; position: absolute; top: 0; right: 0;" class="fa-solid fa-circle-exclamation">
+                        </i>
+                        {% endif %}
+                        {% endfor %}
                 </button>
             </li>
             {% endif %}
@@ -73,8 +82,9 @@
                                 <span style="margin-right: 5px"
                                     class="badge {{ 'bg-danger' if task.priority == 'High' else 'bg-warning text-dark' if task.priority == 'Medium' else 'bg-primary text-white' }}">
                                     <i class="fa-regular fa-square-caret-up"></i></span>
-                                <span style="margin-right: 5px" class="badge rounded-pill text-bg-secondary">{{
-                                    task.category }}</span>
+                                <a href="{{ url_for('tasks.get_tasks_by_category', category=task.category) }}"
+                                    style="margin-right: 5px" class="badge rounded-pill text-bg-secondary">{{
+                                    task.category }}</a>
                                 <a class="link-body-emphasis link-offset-1"
                                     href="{{ url_for('tasks.view_task', task_id=task.id) }}" target="_blank">{{
                                     task.name }}</a>
@@ -83,22 +93,34 @@
                                 {% if task.due_date and task.progress_status != 'Completed' %}
                                 <span class="d-flex align-items-center" style="margin-right: 5px">
                                     <span class="badge rounded-pill bg-dark">{{ (task.due_date -
-                                        datetime.date.today()).days }} days remaining</span>
+                                        datetime.date.today()).days }} days remaining
+
+                                        {% if (task.due_date -
+                                        datetime.date.today()).days <= config["limit_warning_days"] %} <i
+                                            style="color:red;" class="fa-solid fa-circle-exclamation">
+                                            </i>
+                                            {% endif %}
+                                    </span>
                                 </span>
                                 {% endif %}
                                 <span style="margin-right: 5px"
                                     class="badge rounded-pill {{ 'bg-secondary text-white' if task.progress_status == 'Not Started' else 'bg-primary text-white' if task.progress_status == 'Ongoing' else 'bg-success text-white' if task.progress_status == 'Completed' else 'bg-danger text-white' }}">
                                     {{ task.progress_status }}</span>
                                 <div class="btn-group" role="group" aria-label="Actions">
+                                    <button class="btn btn-sm btn-secondary toggle-icon-btn" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseDescription{{ task.id }}"
+                                        aria-expanded="false" aria-controls="collapseDescription{{ task.id }}">
+                                        <i class="fa-solid fa-caret-down"></i>
+                                    </button>
+                                    <a href="{{ url_for('tasks.edit_task', task_id=task.id, back=request.path) }}"
+                                        class="btn btn-sm btn-primary"><i class="fa-solid fa-pencil"></i></a>
+                                    <button type="button" class="btn btn-sm btn-danger delete-task-btn"
+                                        data-task-id="{{ task.id }}"><i class="fa-solid fa-trash"></i></button>
                                     {% if task.external_link %}
                                     <a href="{{ task.external_link }}" target="_blank"
                                         class="btn btn-sm btn-outline-primary"><i
                                             class="fa-solid fa-arrow-up-right-from-square"></i></a>
                                     {% endif %}
-                                    <a href="{{ url_for('tasks.edit_task', task_id=task.id, back=request.path) }}"
-                                        class="btn btn-sm btn-primary"><i class="fa-solid fa-pencil"></i></a>
-                                    <button type="button" class="btn btn-sm btn-danger delete-task-btn"
-                                        data-task-id="{{ task.id }}"><i class="fa-solid fa-trash"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -106,6 +128,11 @@
                             <div class="progress-bar bg-success" role="progressbar"
                                 style="width: {{ task.progress_counter }}%; height: 7px;"
                                 aria-valuenow="{{ task.progress_counter }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div id="collapseDescription{{ task.id }}" class="collapse">
+                            <div class="col-12">
+                                {{ markdowner.convert(task.description) | safe }}
+                            </div>
                         </div>
                     </div>
                     {% endif %}
@@ -115,12 +142,33 @@
             {% endif %}
             {% endfor %}
         </div>
-
     </div>
 </div>
 
 {% endblock %}
 
 {% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleButtons = document.querySelectorAll('.toggle-icon-btn');
+        toggleButtons.forEach(button => {
+
+            const collapseElementId = button.getAttribute('data-bs-target');
+            const collapseElement = document.querySelector(collapseElementId);
+
+            collapseElement.addEventListener('show.bs.collapse', function () {
+                const icon = button.querySelector('i');
+                icon.classList.remove('fa-caret-down');
+                icon.classList.add('fa-caret-up');
+            });
+
+            collapseElement.addEventListener('hide.bs.collapse', function () {
+                const icon = button.querySelector('i');
+                icon.classList.remove('fa-caret-up');
+                icon.classList.add('fa-caret-down');
+            });
+        });
+    });
+</script>
 
 {% endblock %}

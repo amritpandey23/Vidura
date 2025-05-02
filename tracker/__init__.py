@@ -84,6 +84,7 @@ def home():
         dates=dates,
         notes=notes,
         RESOURCE_CHOICES=RESOURCE_CHOICES,
+        config=config,
     )
 
 
