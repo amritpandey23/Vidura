@@ -70,10 +70,11 @@ def edit_task(task_id):
     return render("edit_task.html", edit_task_form=edit_task_form, back=back)
 
 
-@tasks.route("/task/<int:task_id>")
+@tasks.route("<int:task_id>")
 def view_task(task_id):
     task = Task.query.get_or_404(task_id)
-    return render("view_task.html", task=task, datetime=datetime)
+    form = TaskForm()
+    return render("view_task.html", task=task, datetime=datetime, form=form)
 
 
 @tasks.route("/filter", methods=["POST"])
@@ -191,3 +192,62 @@ def get_tasks_by_category(category):
     """
     tasks = Task.query.filter_by(category=category).all()
     return render("all_tasks.html", tasks=tasks, datetime=datetime)
+
+
+@tasks.route("/<int:task_id>/add_subtask", methods=["GET", "POST"])
+def add_subtask(task_id):
+    parent_task = Task.query.get_or_404(task_id)
+    form = TaskForm()
+
+    if form.validate_on_submit():
+        subtask = Task(
+            name=form.name.data,
+            description=form.description.data,
+            date_of_allotment=form.date_of_allotment.data,
+            due_date=form.due_date.data,
+            category=form.category.data,
+            resource_type=form.resource_type.data,
+            progress_status=form.progress_status.data,
+            priority=form.priority.data,
+            progress_counter=form.progress_counter.data,
+            blockers=form.blockers.data,
+            external_link=form.external_link.data,
+            close_date=form.close_date.data,
+            parent=parent_task,
+        )
+        db.session.add(subtask)
+        db.session.commit()
+        flash("Subtask added successfully!", "success")
+        return redirect(url_for("tasks.view_task", task_id=task_id))
+
+    return render("view_task.html", task=parent_task, form=form)
+
+
+@tasks.route("<int:parent_task_id>/subtask/<int:subtask_id>/complete", methods=["GET"])
+def mark_subtask_complete(parent_task_id, subtask_id):
+    subtask = Task.query.get_or_404(subtask_id)
+    if subtask.parent_id != parent_task_id:
+        flash("Subtask does not belong to the specified parent task.", "danger")
+        return redirect(url_for("tasks.view_task", task_id=parent_task_id))
+
+    subtask.progress_status = "Completed"
+    subtask.close_date = datetime.datetime.today()
+    db.session.commit()
+    flash("Subtask marked as completed!", "success")
+    return redirect(url_for("tasks.view_task", task_id=parent_task_id))
+
+
+@tasks.route(
+    "<int:parent_task_id>/subtask/<int:subtask_id>/incomplete", methods=["GET"]
+)
+def mark_subtask_incomplete(parent_task_id, subtask_id):
+    subtask = Task.query.get_or_404(subtask_id)
+    if subtask.parent_id != parent_task_id:
+        flash("Subtask does not belong to the specified parent task.", "danger")
+        return redirect(url_for("tasks.view_task", task_id=parent_task_id))
+
+    subtask.progress_status = "Not Started"
+    subtask.close_date = None
+    db.session.commit()
+    flash("Subtask marked as incomplete!", "success")
+    return redirect(url_for("tasks.view_task", task_id=parent_task_id))

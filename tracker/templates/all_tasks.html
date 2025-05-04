@@ -14,6 +14,7 @@
 
 <div class="container row mb-4">
 	{% for task in tasks %}
+	{% if task.parent_id == None %}
 	<div class="col-12 card py-2 mt-3 shadow-sm 
 		{% if task.progress_status == 'Dropped' %} bg-dark-subtle 
         {% elif task.progress_status == 'Not Started' %} bg-body 
@@ -63,6 +64,7 @@
 			</div>
 		</div>
 	</div>
+	{% endif %}
 	{% endfor %}
 </div>
 
