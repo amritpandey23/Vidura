@@ -51,7 +51,7 @@ def delete_task(task_id):
 @tasks.route("/edit/<int:task_id>", methods=["GET", "POST"])
 def edit_task(task_id):
     task = Task.query.get_or_404(task_id)
-    back = url_for("home")
+    back = url_for("tasks.view_task", task_id=task_id)
 
     if request.args.get("back"):
         back = request.args.get("back")
@@ -59,6 +59,19 @@ def edit_task(task_id):
     edit_task_form = TaskForm(obj=task)
 
     if edit_task_form.validate_on_submit():
+        parent_task_id = task.parent_id
+        if parent_task_id is not None:
+            parent_task = Task.query.get_or_404(parent_task_id)
+            if parent_task.progress_status == "Completed":
+                flash("Cannot edit a task that is already completed.", "danger")
+                return redirect(url_for("tasks.view_task", task_id=parent_task_id))
+            elif (
+                parent_task.progress_status == "Not Started"
+                and edit_task_form.progress_status.data != "Not Started"
+            ):
+                parent_task = Task.query.get_or_404(parent_task_id)
+                parent_task.progress_status = "Ongoing"
+                db.session.commit()
         edit_task_form.populate_obj(task)
         try:
             db.session.commit()
@@ -66,7 +79,7 @@ def edit_task(task_id):
             flash("Error updating record in database", "danger")
         finally:
             flash("Record updated successfully", "success")
-            return redirect(url_for("home"))
+            return redirect(back)
     return render("edit_task.html", edit_task_form=edit_task_form, back=back)
 
 
