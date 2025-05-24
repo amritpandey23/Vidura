@@ -168,6 +168,17 @@
                                                 class="btn btn-sm btn-primary"><i class="fa-solid fa-pencil"></i></a>
                                             <button type="button" class="btn btn-sm btn-danger delete-task-btn"
                                                 data-task-id="{{ task.id }}"><i class="fa-solid fa-trash"></i></button>
+                                            {% set valid_subtasks = task.subtasks | rejectattr('progress_status',
+                                            'equalto',
+                                            'Dropped') | rejectattr('archive_status', 'equalto', True) | list %}
+                                            {% if task.subtasks.count() > 0 %}
+                                            <button class="btn btn-sm btn-outline-secondary" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#subtasks-{{ task.id }}"
+                                                aria-expanded="false" aria-controls="subtasks-{{ task.id }}">
+                                                <i class="fa-solid fa-list-ul"></i>
+                                                ({{ valid_subtasks | length }})
+                                            </button>
+                                            {% endif %}
                                             {% if task.external_link %}
                                             <a href="{{ task.external_link }}" target="_blank"
                                                 class="btn btn-sm btn-outline-primary"><i
@@ -179,7 +190,7 @@
                                 {% if task.subtasks.count() > 0 %}
                                 <div class="col-12 progress mt-1" style="height: 7px;">
                                     {% set valid_subtasks = task.subtasks | rejectattr('progress_status', 'equalto',
-                                    'Dropped') | list %}
+                                    'Dropped') | rejectattr('archive_status', 'equalto', True) | list %}
                                     {% set total = valid_subtasks | length %}
                                     {% if total > 0 %}
                                     {% set completed = valid_subtasks | selectattr('progress_status', 'equalto',
@@ -196,6 +207,57 @@
                                         </div>
                                     </div>
                                     {% endif %}
+                                </div>
+
+                                <!-- Subtasks Collapsible Section -->
+                                <div>
+                                    <div class="collapse" id="subtasks-{{ task.id }}">
+                                        <div class="card card-body mt-2">
+                                            {% for subtask in valid_subtasks %}
+                                            <div
+                                                class="px-3 py-2 border rounded-1 m-2 bg-secondary-subtle d-flex justify-content-between align-items-center py-1 {% if not loop.last %}border-bottom{% endif %}">
+                                                <div class="d-flex align-items-center">
+                                                    <span style="margin-right: 8px"
+                                                        class="badge {{ 'bg-danger' if subtask.priority == 'High' else 'bg-warning text-dark' if subtask.priority == 'Medium' else 'bg-secondary text-white' }}">
+                                                        <i class="fa-regular fa-square-caret-up"></i>
+                                                    </span>
+                                                    <a class="link-body-emphasis link-offset-1"
+                                                        href="{{ url_for('tasks.view_task', task_id=subtask.id) }}">
+                                                        {{ subtask.name }}
+                                                    </a>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    {% if subtask.due_date and subtask.progress_status != 'Completed' %}
+                                                    <span class="badge rounded-pill bg-dark me-2">
+                                                        {{ (subtask.due_date - datetime.date.today()).days }} days
+                                                        {% if (subtask.due_date - datetime.date.today()).days <=
+                                                            config["limit_warning_days"] %} <i style="color:red;"
+                                                            class="fa-solid fa-circle-exclamation"></i>
+                                                            {% endif %}
+                                                    </span>
+                                                    {% endif %}
+                                                    <span
+                                                        class="badge rounded-pill {{ 'bg-secondary text-white' if subtask.progress_status == 'Not Started' else 'bg-primary text-white' if subtask.progress_status == 'Ongoing' else 'bg-success text-white' if subtask.progress_status == 'Completed' else 'bg-danger text-white' }}">
+                                                        {{ subtask.progress_status }}
+                                                    </span>
+                                                    <div class="btn-group ms-2" role="group"
+                                                        aria-label="Subtask Actions">
+                                                        <a href="{{ url_for('tasks.edit_task', task_id=subtask.id, back=request.path) }}"
+                                                            class="btn btn-xs btn-outline-primary">
+                                                            <i class="fa-solid fa-pencil"></i>
+                                                        </a>
+                                                        {% if subtask.external_link %}
+                                                        <a href="{{ subtask.external_link }}" target="_blank"
+                                                            class="btn btn-xs btn-outline-secondary">
+                                                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                                        </a>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
                                 </div>
                                 {% endif %}
                             </div>

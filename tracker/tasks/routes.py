@@ -264,3 +264,64 @@ def mark_subtask_incomplete(parent_task_id, subtask_id):
     db.session.commit()
     flash("Subtask marked as incomplete!", "success")
     return redirect(url_for("tasks.view_task", task_id=parent_task_id))
+
+
+# Add these routes to your existing tasks.py file
+
+
+@tasks.route(
+    "<int:parent_task_id>/subtask/<int:subtask_id>/update_progress", methods=["POST"]
+)
+def update_subtask_progress(parent_task_id, subtask_id):
+    """Update the progress status of a subtask via dropdown"""
+    subtask = Task.query.get_or_404(subtask_id)
+    if subtask.parent_id != parent_task_id:
+        flash("Subtask does not belong to the specified parent task.", "danger")
+        return redirect(url_for("tasks.view_task", task_id=parent_task_id))
+
+    new_progress_status = request.form.get("progress_status")
+
+    # Validate the progress status
+    valid_statuses = ["Not Started", "Ongoing", "Completed", "Dropped"]
+    if new_progress_status not in valid_statuses:
+        flash("Invalid progress status.", "danger")
+        return redirect(url_for("tasks.view_task", task_id=parent_task_id))
+
+    # Update the subtask
+    subtask.progress_status = new_progress_status
+
+    # Set close_date when marking as completed
+    if new_progress_status == "Completed":
+        subtask.close_date = datetime.datetime.today()
+    elif new_progress_status in ["Not Started", "Ongoing", "Dropped"]:
+        # Clear close_date if marking as not completed
+        subtask.close_date = None
+
+    try:
+        db.session.commit()
+        flash(f"Subtask progress updated to '{new_progress_status}'!", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash("Error updating subtask progress.", "danger")
+
+    return redirect(url_for("tasks.view_task", task_id=parent_task_id))
+
+
+@tasks.route("<int:parent_task_id>/subtask/<int:subtask_id>/archive", methods=["GET"])
+def archive_subtask(parent_task_id, subtask_id):
+    """Archive a subtask so it doesn't appear in the subtask list"""
+    subtask = Task.query.get_or_404(subtask_id)
+    if subtask.parent_id != parent_task_id:
+        flash("Subtask does not belong to the specified parent task.", "danger")
+        return redirect(url_for("tasks.view_task", task_id=parent_task_id))
+
+    subtask.archive_status = True
+
+    try:
+        db.session.commit()
+        flash("Subtask has been archived successfully!", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash("Error archiving subtask.", "danger")
+
+    return redirect(url_for("tasks.view_task", task_id=parent_task_id))

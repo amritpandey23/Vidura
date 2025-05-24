@@ -39,7 +39,7 @@
 
         <!-- Subtask List -->
         <div class="row">
-            <div class="col-md-7">
+            <div class="col-md-6">
                 <div class="mb-3">
                     <h5><i class="fa-solid fa-calendar-day"></i> Task Details</h5>
                     <hr>
@@ -78,9 +78,10 @@
 
             </div>
 
-            <div class="col-md-5">
+            <div class="col-md-6">
                 <!-- Optional: Insert Progress or Summary Panel -->
-                {% set valid_subtasks = task.subtasks | rejectattr('progress_status', 'equalto', 'Dropped') | list %}
+                {% set valid_subtasks = task.subtasks | rejectattr('progress_status', 'equalto', 'Dropped') |
+                rejectattr('archive_status', 'equalto', True) | list %}
                 {% set total = valid_subtasks | length %}
                 {% set completed = valid_subtasks | selectattr('progress_status', 'equalto', 'Completed') | list |
                 length %}
@@ -108,64 +109,71 @@
                         <i class="fa-solid fa-plus"></i> Add Subtask
                     </button>
                     {% for subtask in task.subtasks %}
+                    {% if not subtask.archive_status %}
                     <div class="card py-2 shadow-sm mb-2
-                        {% if subtask.progress_status == 'Dropped' %} bg-dark-subtle 
-                        {% elif subtask.progress_status == 'Not Started' %} bg-body 
-                        {% elif subtask.progress_status == 'Ongoing' %} bg-primary-subtle 
-                        {% elif subtask.progress_status == 'Completed' %} bg-success-subtle 
-                        {% else %} bg-danger-subtle {% endif %}">
-                        <div class="px-2 d-flex justify-content-between">
-                            <div class="d-flex align-items-center">
-                                <span
-                                    class="badge me-2 {{ 'bg-danger' if subtask.resource_type == 'S' else 'bg-primary text-white' }}">
-                                    {{ subtask.resource_type }}
-                                </span>
-                                <span class="badge text-bg-secondary me-2">{{ subtask.category }}</span>
-
-                                {% if subtask.progress_status == 'Dropped' %}
-                                <a class="text-decoration-line-through link-body-emphasis"
-                                    href="{{ url_for('tasks.view_task', task_id=subtask.id) }}" target="_blank">{{
-                                    subtask.name }}</a>
-                                {% else %}
-                                <a class="link-body-emphasis"
-                                    href="{{ url_for('tasks.view_task', task_id=subtask.id) }}" target="_blank">{{
-                                    subtask.name }}</a>
-                                {% endif %}
-                            </div>
-                            <div class="d-flex align-items-center">
-                                {% if subtask.due_date and subtask.progress_status not in ['Completed', 'Dropped'] %}
-                                <span class="badge bg-success me-2">
-                                    {{ (subtask.due_date - datetime.date.today()).days }} days remaining
-                                </span>
-                                {% endif %}
-                                <span class="badge me-2
-                                    {% if subtask.progress_status == 'Not Started' %} bg-secondary text-white
-                                    {% elif subtask.progress_status == 'Ongoing' %} bg-primary text-white
-                                    {% elif subtask.progress_status == 'Completed' %} bg-success text-white
-                                    {% else %} bg-danger text-white {% endif %}">
-                                    {{ subtask.progress_status }}
-                                    {% if subtask.progress_status == 'Completed' %}
-                                    on {{ subtask.close_date }}
-                                    {% endif %}
-                                </span>
-                                <div class="btn-group" role="group">
-                                    {% if subtask.progress_status == 'Completed' %}
-                                    <a type="button" class="btn btn-sm btn-outline-danger"
-                                        href="{{ url_for('tasks.mark_subtask_incomplete', parent_task_id=task.id, subtask_id=subtask.id) }}">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </a>
+                            {% if subtask.progress_status == 'Dropped' %} bg-dark-subtle 
+                            {% elif subtask.progress_status == 'Not Started' %} bg-body 
+                            {% elif subtask.progress_status == 'Ongoing' %} bg-primary-subtle 
+                            {% elif subtask.progress_status == 'Completed' %} bg-success-subtle 
+                            {% else %} bg-danger-subtle {% endif %}">
+                        <div class="px-2">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="d-flex align-items-center">
+                                    <span
+                                        class="badge me-2 {{ 'bg-danger' if subtask.resource_type == 'S' else 'bg-primary text-white' }}">
+                                        {{ subtask.resource_type }}
+                                    </span>
+                                    {% if subtask.progress_status == 'Dropped' %}
+                                    <a class="text-decoration-line-through link-body-emphasis"
+                                        href="{{ url_for('tasks.view_task', task_id=subtask.id) }}" target="_blank">{{
+                                        subtask.name }}</a>
                                     {% else %}
-                                    <a type="button" class="btn btn-sm btn-outline-success"
-                                        href="{{ url_for('tasks.mark_subtask_complete', parent_task_id=task.id, subtask_id=subtask.id) }}">
-                                        <i class="fa-solid fa-check"></i>
-                                    </a>
+                                    <a class="link-body-emphasis"
+                                        href="{{ url_for('tasks.view_task', task_id=subtask.id) }}" target="_blank">{{
+                                        subtask.name }}</a>
                                     {% endif %}
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    {% if subtask.due_date and subtask.progress_status not in ['Completed', 'Dropped']
+                                    %}
+                                    <span class="badge bg-success me-2">
+                                        {{ (subtask.due_date - datetime.date.today()).days }} days remaining
+                                    </span>
+                                    {% endif %}
+                                    <span class="badge text-bg-secondary me-2">{{ subtask.category }}</span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <form method="POST"
+                                        action="{{ url_for('tasks.update_subtask_progress', parent_task_id=task.id, subtask_id=subtask.id) }}"
+                                        class="me-2">
+                                        {{ form.csrf_token() if form and form.csrf_token }}
+                                        <select name="progress_status" class="form-select form-select-sm"
+                                            onchange="this.form.submit()" style="width: 150px;">
+                                            <option value="Not Started" {% if subtask.progress_status=='Not Started'
+                                                %}selected{% endif %}>Not Started</option>
+                                            <option value="Ongoing" {% if subtask.progress_status=='Ongoing'
+                                                %}selected{% endif %}>Ongoing</option>
+                                            <option value="Completed" {% if subtask.progress_status=='Completed'
+                                                %}selected{% endif %}>Completed</option>
+                                            <option value="Dropped" {% if subtask.progress_status=='Dropped'
+                                                %}selected{% endif %}>Dropped</option>
+                                        </select>
+                                    </form>
+                                </div>
+                                <div class="btn-group" role="group">
                                     {% if subtask.external_link %}
                                     <a href="{{ subtask.external_link }}" target="_blank"
                                         class="btn btn-sm btn-outline-primary">
                                         <i class="fa-solid fa-arrow-up-right-from-square"></i>
                                     </a>
                                     {% endif %}
+                                    <a href="{{ url_for('tasks.archive_subtask', parent_task_id=task.id, subtask_id=subtask.id) }}"
+                                        class="btn btn-sm btn-warning">
+                                        <i class="fa-solid fa-archive"></i>
+                                    </a>
                                     <a href="{{ url_for('tasks.edit_task', task_id=subtask.id) }}"
                                         class="btn btn-sm btn-primary">
                                         <i class="fa-solid fa-pencil"></i>
@@ -178,6 +186,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                     {% else %}
                     <p class="text-muted mt-2">No subtasks yet.</p>
                     {% endfor %}
