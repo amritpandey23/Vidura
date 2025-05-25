@@ -188,28 +188,6 @@
                                     </div>
                                 </div>
                                 {% if task.subtasks.count() > 0 %}
-                                <div class="col-12 progress mt-1" style="height: 7px;">
-                                    {% set valid_subtasks = task.subtasks | rejectattr('progress_status', 'equalto',
-                                    'Dropped') | rejectattr('archive_status', 'equalto', True) | list %}
-                                    {% set total = valid_subtasks | length %}
-                                    {% if total > 0 %}
-                                    {% set completed = valid_subtasks | selectattr('progress_status', 'equalto',
-                                    'Completed') | list | length %}
-                                    {% set percent_complete = (completed / total * 100) %}
-                                    <div class="col-12 progress" style="height: 7px;">
-                                        <div class="progress-bar 
-                                        {% if percent_complete == 100 %} bg-success 
-                                        {% elif percent_complete >= 50 %} bg-primary 
-                                        {% else %} bg-success {% endif %}" role="progressbar"
-                                            style="width: {{ percent_complete }}%; height: 7px;"
-                                            aria-valuenow="{{ percent_complete | round(0, 'floor') }}" aria-valuemin="0"
-                                            aria-valuemax="100">
-                                        </div>
-                                    </div>
-                                    {% endif %}
-                                </div>
-
-                                <!-- Subtasks Collapsible Section -->
                                 <div>
                                     <div class="collapse" id="subtasks-{{ task.id }}">
                                         <div class="card card-body mt-2">
@@ -259,6 +237,26 @@
                                         </div>
                                     </div>
                                 </div>
+                                {% set valid_subtasks = task.subtasks | rejectattr('progress_status', 'equalto', 'Dropped') | rejectattr('archive_status', 'equalto', True) | list %}
+                                {% set total = valid_subtasks | length %}
+                                {% if total > 0 %}
+                                    {% set completed = valid_subtasks | selectattr('progress_status', 'equalto', 'Completed') | list | length %}
+                                    {% set percent_complete = (completed / total * 100) %}
+                                    <div class="mt-2">
+                                        <div class="progress position-relative" style="height: 20px;">
+                                            <div class="progress-bar {% if percent_complete == 100 %}bg-success{% elif percent_complete >= 50 %}bg-primary{% else %}bg-warning{% endif %}" 
+                                                 role="progressbar" 
+                                                 style="width: {{ percent_complete }}%"
+                                                 aria-valuenow="{{ percent_complete|round(0, 'floor') }}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                                <div class="position-absolute w-100 text-center" style="line-height: 20px;">
+                                                    <small class="fw-semibold text-dark">{{ completed }}/{{ total }} completed</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
                                 {% endif %}
                             </div>
                             {% endif %}
