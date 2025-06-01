@@ -8,9 +8,11 @@ from wtforms import (
     SubmitField,
     DateField,
     IntegerField,
+    MultipleFileField,
 )
 from flask_pagedown.fields import PageDownField
-from wtforms.validators import Optional, DataRequired, Length
+from wtforms.validators import Optional, DataRequired, Length, URL
+from flask_wtf.file import FileField, FileAllowed
 
 from tracker import app
 
@@ -98,6 +100,10 @@ class TaskForm(FlaskForm):
 
     blockers = TextAreaField("Blockers")
     external_link = TextAreaField("External Link")
+    attachment = MultipleFileField('Attachments', validators=[
+        Optional(),
+        FileAllowed(['pdf', 'png', 'jpg', 'jpeg', 'doc', 'docx', 'txt'], 'Only PDF, images, documents and text files are allowed!')
+    ])
 
     close_date = DateField("Close Date", validators=[Optional()])
 

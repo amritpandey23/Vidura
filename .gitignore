@@ -7,3 +7,4 @@ config.py
 tracker/data/config.json
 tracker/data/important_dates.json
 tracker/data/notes.json
+tracker/uploads/

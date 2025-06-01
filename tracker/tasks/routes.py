@@ -1,18 +1,57 @@
-from flask import Blueprint, request, flash, redirect, url_for
+from flask import Blueprint, request, flash, redirect, url_for, send_file, current_app, abort
 import datetime
+import os
+import mimetypes
+from werkzeug.utils import secure_filename
 from tracker.tasks.forms import TaskForm, TaskFilterForm
-from tracker.tasks.models import Task
+from tracker.tasks.models import Task, Attachment
 from sqlalchemy import or_, desc
-from tracker import db
+from tracker import db, app
 from tracker.utils import render
 
 tasks = Blueprint("tasks", __name__, url_prefix="/tasks")
 
+# Configure upload folder
+UPLOAD_FOLDER = os.path.join(app.root_path, 'uploads')
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+def get_file_type(filename):
+    mime_type, _ = mimetypes.guess_type(filename)
+    if mime_type:
+        viewable_types = [
+            'image/jpeg', 'image/png', 'image/gif', 'application/pdf',
+            'text/plain', 'text/html', 'text/css', 'text/javascript'
+        ]
+        return mime_type if mime_type in viewable_types else None
+    return None
+
+def save_attachment(file, task_id):
+    if file and hasattr(file, 'filename') and file.filename:
+        original_filename = secure_filename(file.filename)
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_')
+        filename = timestamp + original_filename
+        
+        task_folder = os.path.join(UPLOAD_FOLDER, str(task_id))
+        if not os.path.exists(task_folder):
+            os.makedirs(task_folder)
+            
+        filepath = os.path.join(task_folder, filename)
+        file.save(filepath)
+        
+        attachment = Attachment(
+            filename=filename,
+            original_filename=original_filename,
+            file_path=filepath,
+            task_id=task_id
+        )
+        return attachment
+    return None
 
 @tasks.route("/add", methods=["POST"])
 def add_task():
-    form = TaskForm(request.form)
-    if form.validate():
+    form = TaskForm()
+    if form.validate_on_submit():
         task = Task(
             name=form.name.data,
             description=form.description.data,
@@ -25,28 +64,101 @@ def add_task():
             blockers=form.blockers.data,
             external_link=form.external_link.data,
             progress_counter=form.progress_counter.data,
-            close_date=form.close_date.data,
+            close_date=form.close_date.data
         )
         try:
             db.session.add(task)
             db.session.commit()
-        except Exception as e:
-            flash("Problems adding task to db", "danger")
-        finally:
+            
+            if form.attachment.data:
+                for file in form.attachment.data:
+                    if file.filename:  # Check if a file was actually selected
+                        attachment = save_attachment(file, task.id)
+                        if attachment:
+                            db.session.add(attachment)
+                db.session.commit()
+            
             flash("Task successfully added", "success")
+        except Exception as e:
+            db.session.rollback()
+            flash("Problems adding task to db", "danger")
     else:
         flash("Validating Task failed", "warning")
     return redirect(url_for("home"))
 
+@tasks.route("/view_attachment/<int:attachment_id>")
+def view_attachment(attachment_id):
+    attachment = Attachment.query.get_or_404(attachment_id)
+    if os.path.exists(attachment.file_path):
+        try:
+            return send_file(
+                attachment.file_path,
+                mimetype=get_file_type(attachment.filename) or 'application/octet-stream',
+                as_attachment=False
+            )
+        except Exception as e:
+            flash("Error accessing attachment", "error")
+    else:
+        flash("Attachment not found", "error")
+    return redirect(url_for("tasks.view_task", task_id=attachment.task_id))
+
+@tasks.route("/download_attachment/<int:attachment_id>")
+def download_attachment(attachment_id):
+    attachment = Attachment.query.get_or_404(attachment_id)
+    if os.path.exists(attachment.file_path):
+        try:
+            return send_file(
+                attachment.file_path,
+                as_attachment=True,
+                download_name=attachment.original_filename
+            )
+        except Exception as e:
+            flash("Error downloading attachment", "error")
+    else:
+        flash("Attachment not found", "error")
+    return redirect(url_for("tasks.view_task", task_id=attachment.task_id))
+
+@tasks.route("/delete_attachment/<int:attachment_id>", methods=["POST"])
+def delete_attachment(attachment_id):
+    attachment = Attachment.query.get_or_404(attachment_id)
+    task_id = attachment.task_id
+    
+    if os.path.exists(attachment.file_path):
+        try:
+            os.remove(attachment.file_path)
+            db.session.delete(attachment)
+            db.session.commit()
+            flash("Attachment deleted successfully", "success")
+        except Exception as e:
+            db.session.rollback()
+            flash("Error deleting attachment", "danger")
+    else:
+        db.session.delete(attachment)
+        db.session.commit()
+        flash("Attachment record removed", "warning")
+        
+    return redirect(url_for("tasks.view_task", task_id=task_id))
 
 @tasks.route("/delete/<int:task_id>", methods=["GET", "POST"])
 def delete_task(task_id):
     task = Task.query.get_or_404(task_id)
-    db.session.delete(task)
-    db.session.commit()
-    flash("Task deleted successfully", "success")
+    
+    try:
+        for attachment in task.attachments:
+            if os.path.exists(attachment.file_path):
+                os.remove(attachment.file_path)
+        
+        task_folder = os.path.join(UPLOAD_FOLDER, str(task_id))
+        if os.path.exists(task_folder):
+            os.rmdir(task_folder)
+            
+        db.session.delete(task)
+        db.session.commit()
+        flash("Task deleted successfully", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash("Error deleting task", "danger")
     return redirect(url_for("home"))
-
 
 @tasks.route("/edit/<int:task_id>", methods=["GET", "POST"])
 def edit_task(task_id):
@@ -60,21 +172,27 @@ def edit_task(task_id):
 
     if edit_task_form.validate_on_submit():
         edit_task_form.populate_obj(task)
+        
         try:
+            if edit_task_form.attachment.data:
+                for file in edit_task_form.attachment.data:
+                    if file.filename:  # Check if a file was actually selected
+                        attachment = save_attachment(file, task.id)
+                        if attachment:
+                            db.session.add(attachment)
+            
             db.session.commit()
-        except Exception as e:
-            flash("Error updating record in database", "danger")
-        finally:
             flash("Record updated successfully", "success")
             return redirect(url_for("home"))
-    return render("edit_task.html", edit_task_form=edit_task_form, back=back)
-
+        except Exception as e:
+            db.session.rollback()
+            flash("Error updating record in database", "danger")
+    return render("edit_task.html", edit_task_form=edit_task_form, back=back, task=task)
 
 @tasks.route("/task/<int:task_id>")
 def view_task(task_id):
     task = Task.query.get_or_404(task_id)
     return render("view_task.html", task=task, datetime=datetime)
-
 
 @tasks.route("/filter", methods=["POST"])
 def filter_tasks():
@@ -117,10 +235,8 @@ def filter_tasks():
         )
     return redirect(url_for("home", back=request.path))
 
-
 @tasks.route("/", methods=["GET", "POST"])
 def all_tasks():
-
     # Searching tasks
     query = request.args.get("query")
 
@@ -182,7 +298,6 @@ def all_tasks():
         tasks = tasks.paginate(page=page, per_page=per_page)
 
     return render("all_tasks.html", tasks=tasks, datetime=datetime)
-
 
 @tasks.route("/category/<string:category>", methods=["GET"])
 def get_tasks_by_category(category):

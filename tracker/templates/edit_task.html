@@ -2,7 +2,7 @@
 {% block content %}
 
 <div class="container my-3">
-	<form method="post">
+	<form method="post" enctype="multipart/form-data">
 		{{ edit_task_form.hidden_tag() }}
 		<div class="row">
 			<div class="col-md-8">
@@ -86,6 +86,17 @@
 				<div class="mb-3">
 					{{ edit_task_form.close_date.label(class="form-label") }}
 					{{ edit_task_form.close_date(class="form-control") }}
+				</div>
+
+				<div class="mb-3">
+					{{ edit_task_form.attachment.label(class="form-label") }}
+					{% if task.attachment %}
+						<div class="mb-2">
+							<small class="text-muted">Current attachment: {{ task.attachment.split('/')[-1].split('_', 2)[-1] }}</small>
+						</div>
+					{% endif %}
+					{{ edit_task_form.attachment(class="form-control", multiple="multiple") }}
+					<small class="text-muted">You can select multiple files. Existing attachments will be preserved.</small>
 				</div>
 
 			</div>

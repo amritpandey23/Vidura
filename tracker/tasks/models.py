@@ -19,6 +19,19 @@ class Task(db.Model):
     last_worked_on = db.Column(db.Date, nullable=False, default=datetime.today)
     close_date = db.Column(db.Date, nullable=True)
     progress_counter = db.Column(db.Integer, default=0)
+    attachments = db.relationship('Attachment', backref='task', lazy=True, cascade='all, delete-orphan')
 
     def __repr__(self) -> str:
         return f"<Task {self.name} {self.category}"
+
+
+class Attachment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(255), nullable=False)
+    original_filename = db.Column(db.String(255), nullable=False)
+    file_path = db.Column(db.String(500), nullable=False)
+    upload_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    task_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<Attachment {self.original_filename}>'

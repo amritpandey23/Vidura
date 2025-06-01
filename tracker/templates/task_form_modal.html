@@ -6,7 +6,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="{{ url_for('tasks.add_task') }}">
+                <form method="post" action="{{ url_for('tasks.add_task') }}" enctype="multipart/form-data">
                     {{ task_form.hidden_tag() }}
                     <div class="row">
 
@@ -95,6 +95,11 @@
                             <div class="mb-3">
                                 {{ task_form.external_link.label(class="form-label") }}
                                 {{ task_form.external_link(class="form-control") }}
+                            </div>
+                            <div class="mb-3">
+                                {{ task_form.attachment.label(class="form-label") }}
+                                {{ task_form.attachment(class="form-control", multiple="multiple") }}
+                                <small class="text-muted">You can select multiple files</small>
                             </div>
                         </div>
                     </div>

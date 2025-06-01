@@ -1,12 +1,11 @@
 from flask import Flask, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_pagedown import PageDown
 import datetime, json
 
 from tracker.forms import SettingsForm
 from tracker.utils2 import get_or_initialize_config, persist_config_json, initialize_app
-
-from flask_pagedown import PageDown
 
 app = Flask(__name__)
 
