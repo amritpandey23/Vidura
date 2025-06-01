@@ -1,48 +1,64 @@
 <nav class="navbar navbar-expand-lg border-bottom border-body bg-dark" data-bs-theme="dark">
     <div class="container">
         <a class="navbar-brand" href="{{ url_for('home') }}">{{ site_name }}</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+            aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse d-flex justify-content-center" id="navbarNavAltMarkup">
-            <form class="d-flex" action="{{ url_for('tasks.all_tasks') }}" method="GET">
-                <input class="form-control me-2" type="search" placeholder="Search tasks..." aria-label="Search"
-                    name="query" value="{{search_term}}">
-                <button class="btn btn-outline-light" type="submit"><i
-                        class="fa-solid fa-magnifying-glass"></i></button>
-            </form>
-        </div>
+        
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <div class="d-lg-flex justify-content-between align-items-center w-100">
+                <!-- Search Form -->
+                <form class="d-flex my-2 my-lg-0 flex-grow-1 mx-lg-4" action="{{ url_for('tasks.all_tasks') }}" method="GET">
+                    <input class="form-control me-2" type="search" placeholder="Search tasks..." aria-label="Search"
+                        name="query" value="{{search_term}}">
+                    <button class="btn btn-outline-light" type="submit">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </form>
 
-        <div class="collapse navbar-nav d-flex justify-content-center align-items-center">
-            <li class="nav-item">
-                <a style="font-size: 18px; cursor: pointer;" class="text-light mx-2" data-bs-toggle="modal"
-                    data-bs-target="#dailyLogModal"><i class="fa-solid fa-book"></i></a>
-            </li>
-            <li class="nav-item">
-                <a style="font-size: 18px; cursor: pointer;" class="text-light mx-2" data-bs-toggle="modal"
-                    data-bs-target="#newTaskModal"><i class="fa-solid fa-plus"></i></a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                    <i class="fa-solid fa-user"></i>
-                </a>
-                <ul class="dropdown-menu">
-                    <li> <a class="dropdown-item" href="{{ url_for('tasks.all_tasks') }}"><i
-                                class="fa-solid fa-layer-group"></i> All
-                            Tasks</a></li>
-                    <li>
-                        <a class="dropdown-item" href="{{ url_for('logs.logs') }}"><i
-                                class="fa-solid fa-clock-rotate-left"></i>
-                            Logs</a>
+                <!-- Navigation Items -->
+                <ul class="navbar-nav mb-2 mb-lg-0 d-flex align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link text-light px-3" style="font-size: 18px; cursor: pointer;" data-bs-toggle="modal"
+                            data-bs-target="#dailyLogModal">
+                            <i class="fa-solid fa-book"></i>
+                            <span class="d-lg-none ms-2">Daily Log</span>
+                        </a>
                     </li>
-                    <li>
-                        <a class="dropdown-item" href="{{ url_for('settings') }}"><i class="fa-solid fa-gear"></i>
-                            Settings</a>
+                    <li class="nav-item">
+                        <a class="nav-link text-light px-3" style="font-size: 18px; cursor: pointer;" data-bs-toggle="modal"
+                            data-bs-target="#newTaskModal">
+                            <i class="fa-solid fa-plus"></i>
+                            <span class="d-lg-none ms-2">New Task</span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active px-3" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="fa-solid fa-user"></i>
+                            <span class="d-lg-none ms-2">Menu</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('tasks.all_tasks') }}">
+                                    <i class="fa-solid fa-layer-group"></i> All Tasks
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('logs.logs') }}">
+                                    <i class="fa-solid fa-clock-rotate-left"></i> Logs
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('settings') }}">
+                                    <i class="fa-solid fa-gear"></i> Settings
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
-            </li>
+            </div>
         </div>
     </div>
 </nav>

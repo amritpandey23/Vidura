@@ -20,5 +20,15 @@ class Task(db.Model):
     close_date = db.Column(db.Date, nullable=True)
     progress_counter = db.Column(db.Integer, default=0)
 
+    parent_id = db.Column(
+        db.Integer, db.ForeignKey("task.id", name="fk_task_parent"), nullable=True
+    )
+    subtasks = db.relationship(
+        "Task",
+        backref=db.backref("parent", remote_side=[id]),
+        lazy="dynamic",
+        cascade="all, delete-orphan",
+    )
+
     def __repr__(self) -> str:
-        return f"<Task {self.name} {self.category}"
+        return f"<Task {self.name} {self.category}>"

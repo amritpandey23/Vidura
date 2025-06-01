@@ -42,18 +42,21 @@ def home():
         Task.progress_status != "Completed",
         Task.priority == "High",
         Task.progress_status != "Dropped",
+        Task.parent_id == None,
     ).all()
 
     incomplete_medium_priority_tasks = Task.query.filter(
         Task.progress_status != "Completed",
         Task.priority == "Medium",
         Task.progress_status != "Dropped",
+        Task.parent_id == None,
     ).all()
 
     incomplete_low_priority_tasks = Task.query.filter(
         Task.progress_status != "Completed",
         Task.priority == "Low",
         Task.progress_status != "Dropped",
+        Task.parent_id == None,
     ).all()
 
     # Combine incomplete tasks of different priorities
