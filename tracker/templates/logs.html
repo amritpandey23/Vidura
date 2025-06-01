@@ -34,7 +34,7 @@
         {% for task_id in log.task_ids.split(',') %}
         {% if task_id != '' %}
         <li class="log-card-task-id"><a style="text-decoration: none;" class="text-white py-2 px-3 border bg-secondary"
-                target="_blank" href="{{ url_for('tasks.view_task', task_id=task_id) }}">{{
+                href="{{ url_for('tasks.view_task', task_id=task_id) }}">{{
                 task_id }}</a>
         </li>
         {% endif %}
