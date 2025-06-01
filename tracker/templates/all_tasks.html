@@ -29,11 +29,10 @@
 				<span style="margin-right: 5px" class="badge text-bg-secondary">{{ task.category }}</span>
 				{% if task.progress_status == 'Dropped' %}
 				<a class="text-decoration-line-through link-body-emphasis link-offset-1"
-					href="{{ url_for('tasks.view_task', task_id=task.id) }}" target="_blank">{{
+					href="{{ url_for('tasks.view_task', task_id=task.id) }}">{{
 					task.name }}</a>
 				{% else %}
-				<a class="link-body-emphasis link-offset-1" href="{{ url_for('tasks.view_task', task_id=task.id) }}"
-					target="_blank">{{
+				<a class="link-body-emphasis link-offset-1" href="{{ url_for('tasks.view_task', task_id=task.id) }}">{{
 					task.name }}</a>
 				{% endif %}
 			</div>
@@ -53,8 +52,7 @@
 				</span>
 				<div class="btn-group" role="group" aria-label="Actions">
 					{% if task.external_link %}
-					<a href="{{ task.external_link }}" target="_blank" class="btn btn-sm btn-outline-primary"
-						target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+					<a href="{{ task.external_link }}" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
 					{% endif %}
 					<a href="{{ url_for('tasks.edit_task', task_id=task.id) }}" class="btn btn-sm btn-primary"><i
 							class="fa-solid fa-pencil"></i></a>

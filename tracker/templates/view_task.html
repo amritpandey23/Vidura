@@ -81,7 +81,7 @@
                         {% endif %}
                         {% if task.external_link %}
                         <li class="list-group-item"><strong>External Link:</strong>
-                            <a href="{{ task.external_link }}" target="_blank">{{ task.external_link }}</a>
+                            <a href="{{ task.external_link }}">{{ task.external_link }}</a>
                         </li>
                         {% endif %}
                     </ul>
@@ -136,11 +136,11 @@
                                                 {{ subtask.resource_type }}
                                             </span>
                                             {% if subtask.progress_status == 'Dropped' %}
-                                            <a class="text-decoration-line-through link-body-emphasis" href="{{ url_for('tasks.view_task', task_id=subtask.id) }}" target="_blank">
+                                            <a class="text-decoration-line-through link-body-emphasis" href="{{ url_for('tasks.view_task', task_id=subtask.id) }}">
                                                 {{ subtask.name }}
                                             </a>
                                             {% else %}
-                                            <a class="link-body-emphasis" href="{{ url_for('tasks.view_task', task_id=subtask.id) }}" target="_blank">
+                                            <a class="link-body-emphasis" href="{{ url_for('tasks.view_task', task_id=subtask.id) }}">
                                                 {{ subtask.name }}
                                             </a>
                                             {% endif %}
@@ -160,7 +160,7 @@
                                         </div>
                                         <div class="btn-group">
                                             {% if subtask.external_link %}
-                                            <a href="{{ subtask.external_link }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <a href="{{ subtask.external_link }}" class="btn btn-sm btn-outline-primary">
                                                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
                                             </a>
                                             {% endif %}
@@ -209,7 +209,7 @@
                                                         <span class="badge me-2 {{ 'bg-danger' if subtask.resource_type == 'S' else 'bg-primary text-white' }}">
                                                             {{ subtask.resource_type }}
                                                         </span>
-                                                        <a class="link-body-emphasis" href="{{ url_for('tasks.view_task', task_id=subtask.id) }}" target="_blank">
+                                                        <a class="link-body-emphasis" href="{{ url_for('tasks.view_task', task_id=subtask.id) }}">
                                                             {{ subtask.name }}
                                                         </a>
                                                     </div>

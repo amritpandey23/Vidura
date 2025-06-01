@@ -36,11 +36,11 @@
                                     <p class="card-title text-white mb-0">[{{ date.release }}] {{ date.title }}</p>
                                     <div>
                                         <a href="https://calendar.google.com/calendar/u/0/r/eventedit?dates={{ date.date }}/{{ date.date }}&text={{ date.release }} - {{ date.title }}"
-                                            target="_blank" class="text-white ms-2">
+                                            class="text-white ms-2">
                                             <i class="fa-brands fa-google"></i>
                                         </a>
                                         <a href="https://outlook.office.com/calendar/action/compose?startdt={{ date.date }}&subject={{ date.release }} - {{ date.title }}"
-                                            target="_blank" class="text-white ms-2">
+                                            class="text-white ms-2">
                                             <i class="fa-brands fa-microsoft"></i>
                                         </a>
                                     </div>
@@ -82,7 +82,7 @@
                                 <ul class="list-group list-group-flush">
                                     {% for content in note.content %}
                                     <li class="list-group-item bg-secondary-subtle">
-                                        <a href="{{ content.value }}" target="_blank">{{ content.label }}</a>
+                                        <a href="{{ content.value }}">{{ content.label }}</a>
                                     </li>
                                     {% endfor %}
                                 </ul>
@@ -180,7 +180,7 @@
                                             </button>
                                             {% endif %}
                                             {% if task.external_link %}
-                                            <a href="{{ task.external_link }}" target="_blank"
+                                            <a href="{{ task.external_link }}"
                                                 class="btn btn-sm btn-outline-primary"><i
                                                     class="fa-solid fa-arrow-up-right-from-square"></i></a>
                                             {% endif %}
@@ -225,7 +225,7 @@
                                                             <i class="fa-solid fa-pencil"></i>
                                                         </a>
                                                         {% if subtask.external_link %}
-                                                        <a href="{{ subtask.external_link }}" target="_blank"
+                                                        <a href="{{ subtask.external_link }}"
                                                             class="btn btn-xs btn-outline-secondary">
                                                             <i class="fa-solid fa-arrow-up-right-from-square"></i>
                                                         </a>
